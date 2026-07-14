@@ -20,13 +20,20 @@ DEFINE
     //   DIVIDE(
     //     COUNTROWS(FILTER('Opp Id Break Down','Opp Id Break Down'[Is Hygiene flag?]="Y")),
     //     COUNTROWS('Opp Id Break Down'))
+    // NOTE: COUNTROWS over an empty table returns BLANK(), not 0, and
+    // SUMMARIZECOLUMNS drops rows whose only measure is blank - which
+    // would silently remove exactly the 100%-hygiene people from the
+    // result. COALESCE forces a true 0 for sellers with no flagged opps.
     MEASURE 'Opp Id Break Down'[Hygiene score (flow)] =
         DIVIDE(
-            COUNTROWS(
-                FILTER(
-                    'Opp Id Break Down',
-                    'Opp Id Break Down'[Is Hygiene flag?] = "Y"
-                )
+            COALESCE(
+                COUNTROWS(
+                    FILTER(
+                        'Opp Id Break Down',
+                        'Opp Id Break Down'[Is Hygiene flag?] = "Y"
+                    )
+                ),
+                0
             ),
             COUNTROWS('Opp Id Break Down')
         )

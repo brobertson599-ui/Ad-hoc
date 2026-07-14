@@ -175,6 +175,14 @@ Considered alternatives, if you'd like to upgrade later:
 
 ## Troubleshooting
 
+- **Champions never show up, but flagged people come through fine** — the
+  measure's numerator must be wrapped in `COALESCE(..., 0)` (already in
+  `hygiene-scores.dax`). `COUNTROWS` of an empty table returns `BLANK()`,
+  not 0, and `SUMMARIZECOLUMNS` drops rows whose only measure is blank — so
+  without the `COALESCE`, the 100%-hygiene specialists are removed from the
+  query result entirely (missing from the shoutout *and* the To line). To
+  verify: open the run history, expand *Run hygiene query* → raw outputs —
+  the 100% people should appear with `"[HygieneScore]": 0`.
 - **Expression can't find a value / rows are empty objects** — the JSON keys
   from the Power BI action must match the `SELECTCOLUMNS` aliases *including
   brackets*: `item()?['[SpecialistName]']`. If you rename aliases in the DAX,
