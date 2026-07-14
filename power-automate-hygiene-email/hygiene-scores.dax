@@ -9,8 +9,10 @@
 //   [HygieneScore]    - share of opps flagged for hygiene (0 = perfect,
 //                       i.e. 100% hygiene -> these people get the shoutout)
 //
-// The filters below mirror the report page filters EXCEPT
-// "Is Hygiene flag? = Y". That one is only a display filter on the
+// The filters below mirror the report filters:
+//   Is Relevant Op? = Y (all pages), Current Quarter = "Current Quarter",
+//   IB Specialist / Manager / Services Call not blank
+// EXCEPT "Is Hygiene flag? = Y". That one is only a display filter on the
 // report page - applying it here would make everyone look 100% flagged,
 // so it must NOT be included.
 // =====================================================================
@@ -44,27 +46,35 @@ VAR SellerScores =
         'Opp Id Break Down'[IB specialist],
         'Opp Id Break Down'[IB email],
 
-        // ---- report-page filters, replicated ------------------------
+        // ---- report filters, replicated ------------------------------
         // Is Relevant Op? = Y   (all-pages filter)
         TREATAS({"Y"}, 'Opp Id Break Down'[Is Relevant Op?]),
+
+        // Current Quarter = "Current Quarter"
+        // (if this field lives on another table, e.g. a Date table,
+        //  change the table reference to match)
+        TREATAS({"Current Quarter"}, 'Opp Id Break Down'[Current Quarter]),
+
+        // IB Specialist is not blank
+        FILTER(
+            ALL('Opp Id Break Down'[IB specialist]),
+            NOT ISBLANK('Opp Id Break Down'[IB specialist])
+                && 'Opp Id Break Down'[IB specialist] <> ""
+        ),
 
         // Manager is not blank
         FILTER(
             ALL('Opp Id Break Down'[Manager]),
             NOT ISBLANK('Opp Id Break Down'[Manager])
+                && 'Opp Id Break Down'[Manager] <> ""
         ),
 
         // Services Call is not blank
         FILTER(
             ALL('Opp Id Break Down'[Services Call]),
             NOT ISBLANK('Opp Id Break Down'[Services Call])
+                && 'Opp Id Break Down'[Services Call] <> ""
         ),
-
-        // Current Quarter (locked filter). Adjust the table/column to
-        // whatever field your report filter uses, e.g.:
-        // TREATAS({"Current Quarter"}, 'Opp Id Break Down'[Current Quarter]),
-        // or, if it lives on a date table:
-        // TREATAS({"Current Quarter"}, 'Date'[Quarter Offset Label]),
         // --------------------------------------------------------------
 
         "@HygieneScore", [Hygiene score (flow)]

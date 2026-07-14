@@ -34,10 +34,11 @@ Every **Monday at 10:00** this flow:
 > include `Is Hygiene flag? is Y`. That is only a *display* filter for the
 > page's visuals. Applying it to the score query would make every remaining
 > row flagged (everyone at 0% hygiene). The query in `hygiene-scores.dax`
-> replicates the *other* filters (`Is Relevant Op? = Y`, `Manager` not blank,
-> `Services Call` not blank) and leaves a marked TODO for the locked
-> **Current Quarter** filter — point it at whatever field that filter uses in
-> your model.
+> replicates the *other* filters: `Is Relevant Op? = Y` (all pages),
+> `Current Quarter = "Current Quarter"`, and `IB Specialist` / `Manager` /
+> `Services Call` not blank. If the Current Quarter field lives on a
+> different table in your model (e.g. a Date table), adjust that one table
+> reference in the query.
 
 ---
 
