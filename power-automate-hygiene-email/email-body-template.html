@@ -11,8 +11,9 @@
     {{CHAMPION_ROWS}}    - one <tr> per champion (built by the Select action)
 
   Edit-once placeholders (set these before pasting into the flow):
-    [SENDER NAME], [SENDER JOB TITLE], the SFDC link on the CTA button,
-    and optionally a hosted HPE logo <img> in the header (see comment there).
+    [SENDER NAME], [SENDER JOB TITLE], and optionally a hosted HPE logo
+    <img> in the header (see comment there). The CTA button links to the
+    Hygiene Hub Power BI report.
 
   NOTE: images are intentionally avoided (Outlook blocks data:URIs and
   external images by default) - everything renders from tables + colors.
@@ -213,9 +214,8 @@
 												<tr>
 													<td style="background-color:#01A982; padding: 0 30px;">
 														<p style="text-align:center; margin: 0;">
-															<!-- TODO: point this at your SFDC view / hygiene report -->
-															<a href="https://login.salesforce.com" style="background-color: #01A982; border: 0pt solid #01A982; color: #FFFFFF;font-family:Arial,sans-serif; font-size:12pt;line-height: 42px; font-weight: bold;text-decoration: none;" target="_blank">
-																Review your opportunities in SFDC
+															<a href="https://app.powerbi.com/Redirect?action=OpenReport&amp;appId=5487ab37-f5ef-41b1-b1cb-bfd7f6684652&amp;reportObjectId=1959d48a-7ba2-4af5-b2f4-d78ce7699164&amp;ctid=105b2061-b669-4b31-92ac-24d304d195dc&amp;reportPage=63485e9df828f0870915&amp;pbi_source=appShareLink&amp;portalSessionId=b5921d7d-1330-43d5-8fc8-a1861678cd1c" style="background-color: #01A982; border: 0pt solid #01A982; color: #FFFFFF;font-family:Arial,sans-serif; font-size:12pt;line-height: 42px; font-weight: bold;text-decoration: none;" target="_blank">
+																Hygiene Hub
 															</a>
 														</p>
 													</td>
