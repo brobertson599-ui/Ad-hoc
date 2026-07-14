@@ -176,6 +176,14 @@ Considered alternatives, if you'd like to upgrade later:
 
 ## Troubleshooting
 
+- **400 Bad Request: "Column 'Current Quarter' … cannot be found"** — the
+  Current Quarter filter card in the report shows a *display* name; the real
+  field has a different name or lives on another table (often a Date table).
+  Run [`find-quarter-field.dax`](find-quarter-field.dax) once in the same
+  Power BI action to list candidate fields, then fix the single `TREATAS`
+  line in `hygiene-scores.dax`. You can also find it in the report's edit
+  view: expand the Current Quarter filter card — the field it uses is shown
+  there.
 - **Champions never show up, but flagged people come through fine** — the
   measure's numerator must be wrapped in `COALESCE(..., 0)` (already in
   `hygiene-scores.dax`). `COUNTROWS` of an empty table returns `BLANK()`,

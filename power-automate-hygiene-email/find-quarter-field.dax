@@ -1,0 +1,25 @@
+// =====================================================================
+// One-off discovery query: find the real "Current Quarter" field
+// ---------------------------------------------------------------------
+// Temporarily paste this into the same Power BI action ("Run a query
+// against a dataset") in place of the main query, run a test, and read
+// the raw outputs. It lists every column in the model whose name
+// contains "quarter" or "current", with its table name.
+//
+// Then, in hygiene-scores.dax, update the line
+//     TREATAS({"Current Quarter"}, 'Opp Id Break Down'[Current Quarter]),
+// to use the [TableName] and [ColumnName] you found, e.g.
+//     TREATAS({"Current Quarter"}, 'Date'[Quarter Offset Label]),
+// and paste the main query back into the action.
+// =====================================================================
+EVALUATE
+FILTER(
+    SELECTCOLUMNS(
+        COLUMNSTATISTICS(),
+        "TableName",  [Table Name],
+        "ColumnName", [Column Name]
+    ),
+    SEARCH("quarter", [ColumnName], 1, 0) > 0
+        || SEARCH("current", [ColumnName], 1, 0) > 0
+)
+ORDER BY [TableName], [ColumnName]
