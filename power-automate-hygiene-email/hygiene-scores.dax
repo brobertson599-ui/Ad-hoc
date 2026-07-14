@@ -50,10 +50,8 @@ VAR SellerScores =
         // Is Relevant Op? = Y   (all-pages filter)
         TREATAS({"Y"}, 'Opp Id Break Down'[Is Relevant Op?]),
 
-        // Current Quarter = "Current Quarter"
-        // (if this field lives on another table, e.g. a Date table,
-        //  change the table reference to match)
-        TREATAS({"Current Quarter"}, 'Opp Id Break Down'[Current Quarter]),
+        // Current Quarter Filter = "Current Quarter"
+        TREATAS({"Current Quarter"}, 'Opp Id Break Down'[Current Quarter Filter]),
 
         // IB Specialist is not blank
         FILTER(
