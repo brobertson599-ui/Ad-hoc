@@ -1,0 +1,293 @@
+<!--
+  SFDC Hygiene Weekly - HPE internal email body for Power Automate
+  ================================================================
+  Built from the HPE internal email component template (600px, Arial, #01A982).
+
+  Runtime tokens (replaced by the "Compose email body" expression in the flow):
+    {{RUN_DATE}}         - e.g. "July 14, 2026"
+    {{CHAMPION_COUNT}}   - number of specialists at 100% hygiene
+    {{SHOUTOUT_LINE}}    - sentence containing the @mention links (or the
+                           fallback sentence on a week with no champions)
+    {{CHAMPION_ROWS}}    - one <tr> per champion (built by the Select action)
+
+  Edit-once placeholders (set these before pasting into the flow):
+    [SENDER NAME], [SENDER JOB TITLE], the SFDC link on the CTA button,
+    and optionally a hosted HPE logo <img> in the header (see comment there).
+
+  NOTE: images are intentionally avoided (Outlook blocks data:URIs and
+  external images by default) - everything renders from tables + colors.
+-->
+<body bgcolor="#ffffff" style="font-family: Arial, Helvetica, sans-serif; color:#000000;font-size: 10.5pt;">
+<table cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff;padding: 0 7.5pt;margin: 0;width: 100%;">
+	<tbody>
+		<tr>
+			<td>
+				<table width="600" cellspacing="0" cellpadding="0" align="center" style="background-color: #ffffff;font-family: Arial, Helvetica, sans-serif; color:#000000;">
+
+<!-- Module Header -->
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+					<tr>
+						<td>
+							<table width="100%" cellpadding="0" cellspacing="0" valign="middle" style="vertical-align: middle;">
+								<tr>
+									<td height="50" style="height: 50px;" valign="middle">
+										<!-- HPE element mark. If you have a hosted logo URL on Brand Central,
+										     replace this inner table with:
+										     <img src="https://YOUR-HOSTED-LOGO-URL" height="40" alt="Hewlett Packard Enterprise" /> -->
+										<table cellpadding="0" cellspacing="0">
+											<tr>
+												<td style="border: 4px solid #01A982; width: 34px; height: 12px; font-size: 0; line-height: 0;">&nbsp;</td>
+											</tr>
+											<tr>
+												<td style="padding-top: 4px; font-weight: bold; font-size: 9pt; font-family: Arial, Helvetica, sans-serif; color:#000000; white-space: nowrap;">
+													Hewlett Packard<br />Enterprise
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td width="421" align="right" valign="middle">
+										<span style="text-align: right;font-weight: bold;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000; line-height: 12pt; ">
+											SFDC Hygiene Weekly
+										</span><br />
+										<span style="text-align: right;font-weight: normal;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000; line-height: 12pt; ">
+											Install Base Specialist Team &bull; {{RUN_DATE}}
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Banner (feature) -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" border="0" bgcolor="#01A982">
+								<tr>
+									<td>
+										<p style="text-align: left; margin: 0;">
+											<span style="font-family:Arial,Helvetica,sans-serif; line-height: 24pt; font-size:20pt; color:#FFFFFF;">
+												<strong>Clean pipeline, confident forecasts.</strong>
+											</span>
+										</p>
+										<p style="text-align: left; margin: 8px 0 0 0;">
+											<span style="font-family:Arial,Helvetica,sans-serif; line-height: 14pt; font-size:10.5pt; color:#FFFFFF;">
+												Your weekly SFDC hygiene update &mdash; and a shoutout to this week's 100% Hygiene Club.
+											</span>
+										</p>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Message: why hygiene matters -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" style="background-color: #F8F8F8;">
+								<tr>
+									<td>
+										<table width="100%" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<p style="text-align: left; margin: 0;">
+														<span style="font-family:Arial,Helvetica,sans-serif; line-height: 16pt;font-size:14pt;">
+															<strong>A friendly Monday reminder: SFDC hygiene matters</strong>
+														</span>
+													</p>
+												</td>
+											</tr>
+											<tr><td style="height: 10px">&nbsp;</td></tr>
+											<tr>
+												<td>
+													<p style="margin: 0 0 10px 0;">
+														<span style="text-decoration: none; font-weight: normal;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000; line-height: 14pt;">
+															Accurate opportunity data is what turns our pipeline into something the business can trust. Every field you keep current makes our forecasts sharper, saves your manager chasing updates, and makes quarter-end far less painful for everyone. Thank you for taking a few minutes each week to keep your records clean.
+														</span>
+													</p>
+													<p style="margin: 0 0 4px 0;">
+														<span style="text-decoration: none; font-weight: bold;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000; line-height: 14pt;">
+															A quick self-check for your open opportunities:
+														</span>
+													</p>
+													<ul style="margin: 0; padding-left: 20px;">
+														<span style="text-decoration: none; font-weight: normal;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif;color:#000000; padding: 0;line-height: 14pt; margin: 0;">
+														<li>Close dates are realistic and not sitting in the past</li>
+														<li>Sales stage reflects where the deal actually is today</li>
+														<li>Next steps are current and specific</li>
+														<li>Services call details are attached and complete</li>
+														</span>
+													</ul>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Shoutout: 100% Hygiene Club -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" style="background-color: #F8F8F8;">
+								<tr>
+									<td>
+										<table width="100%" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<p style="text-align: left; margin: 0;">
+														<span style="font-family:Arial,Helvetica,sans-serif; line-height: 16pt;font-size:14pt;">
+															<strong>&#127942; This week's 100% Hygiene Club</strong>
+														</span>
+													</p>
+												</td>
+											</tr>
+											<tr><td style="height: 10px">&nbsp;</td></tr>
+											<tr>
+												<td>
+													<p style="margin: 0;">
+														<span style="text-decoration: none; font-weight: normal;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000; line-height: 14pt;">
+															{{SHOUTOUT_LINE}}
+														</span>
+													</p>
+												</td>
+											</tr>
+											<tr><td style="height: 15px">&nbsp;</td></tr>
+<!-- Champions card -->
+											<tr>
+												<td>
+													<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="background-color: #FFFFFF; border: solid 1px #E0E0E0;">
+														<tr>
+															<td style="padding: 20px 20px 12px 20px; border-bottom: solid 2pt #01A982;">
+																<table width="100%" cellpadding="0" cellspacing="0">
+																	<tr>
+																		<td width="90" style="font-family:Arial,Helvetica,sans-serif; font-size:26pt; font-weight:bold; color:#01A982; line-height:28pt;" valign="middle">
+																			{{CHAMPION_COUNT}}
+																		</td>
+																		<td style="font-family:Arial,Helvetica,sans-serif; font-size:10.5pt; color:#000000; line-height:14pt;" valign="middle">
+																			<strong>specialist(s) at 100% SFDC hygiene this week</strong><br />
+																			Zero hygiene flags across all of their in-scope opportunities.
+																		</td>
+																	</tr>
+																</table>
+															</td>
+														</tr>
+														{{CHAMPION_ROWS}}
+														<tr>
+															<td style="padding: 12px 20px; font-family:Arial,Helvetica,sans-serif; font-size:9pt; color:#000000;">
+																Want your name here next Monday? Clear any hygiene flags on your open opportunities this week.
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module CTA Primary -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" style="background-color: #F8F8F8;">
+								<tr>
+									<td>
+										<table cellpadding="0" cellspacing="0">
+											<tbody>
+												<tr>
+													<td style="background-color:#01A982; padding: 0 30px;">
+														<p style="text-align:center; margin: 0;">
+															<!-- TODO: point this at your SFDC view / hygiene report -->
+															<a href="https://login.salesforce.com" style="background-color: #01A982; border: 0pt solid #01A982; color: #FFFFFF;font-family:Arial,sans-serif; font-size:12pt;line-height: 42px; font-weight: bold;text-decoration: none;" target="_blank">
+																Review your opportunities in SFDC
+															</a>
+														</p>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Sender -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" style="background-color: #F8F8F8;">
+								<tr>
+									<td>
+										<table width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td>
+													<span style="font-weight: normal;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000;line-height: 12pt;">
+														Best Regards,
+													</span>
+												</td>
+											</tr>
+											<tr>
+												<td>
+													<span style="font-weight: bold;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000;line-height: 12pt;">
+														[SENDER NAME]
+													</span><br />
+													<span style="font-weight: normal;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000;line-height: 12pt;">
+														[SENDER JOB TITLE]
+													</span>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Footer -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td align="left" style="vertical-align:top; padding:0 30px;">
+										<span style="font-weight: normal;font-size: 9pt;font-family: Arial, Helvetica, sans-serif; color:#000000; padding:0 0 7.5pt;text-align: left;line-height: 10.5pt;">
+											&copy; 2026 Hewlett Packard Enterprise Development LP
+											<br /><br />
+											HPE Internal Use Only &bull; This email was generated automatically every Monday at 10:00 by Power Automate.
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</body>
