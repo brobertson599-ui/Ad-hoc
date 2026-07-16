@@ -13,8 +13,56 @@ idle motion, a personalised greeting, and a live clock.
 
 | File | What it is |
 |---|---|
-| `UKIMEA-CSLV-Hub-HomeScreen.pa.yaml` | **The deliverable.** Paste-ready Power Apps YAML — every control on the screen, including the animation timers. |
+| `UKIMEA-CSLV-Hub-HomeScreen.pa.yaml` | Classic edition. Paste-ready Power Apps YAML — every control on the screen, animations driven by Timer controls, statuses edited directly in the app. |
+| `UKIMEA-CSLV-Hub-HomeScreen-SVG.pa.yaml` | **SVG + live Excel edition (recommended).** Same design rebuilt with SVG graphics — smoother 60 fps animations, an HPE-themed entrance — and the status board, badges, dots, ticker and button links all fed live from an Excel table. Setup steps below. |
 | `preview/ukimea-cslv-hub-preview.html` | Design preview. Open in a browser to see the layout, colours, entrance/idle animations, and button hover behaviour before building in Power Apps. |
+
+## SVG + live Excel edition
+
+**Why SVG:** every visual (header, button cards, status card, dots) is an
+Image control whose Image property is an inline SVG with its animations
+written as CSS keyframes. They run at a smooth 60 fps, play even in
+Studio's edit mode, and need no animation timers. Because an SVG can't
+react to the mouse, each card has an invisible button on top that
+supplies the hover green, pressed state, focus ring, tooltip and the
+`Launch()`.
+
+**The HPE-themed entrance:** the HPE "element" (the brand's green
+rectangle outline) draws itself beside the title → brand stripe sweeps
+across → each card's border traces itself in, its name rises, and a green
+accent underline sweeps beneath it (staggered card by card) → the status
+card outline draws and its separators grow in → the dots pop in.
+**Idle:** a light shimmer crosses the brand stripe every 7 s and each dot
+emits a radar "ping" ring in its status colour.
+
+**Excel setup (do this BEFORE pasting):**
+
+1. Put the workbook in **OneDrive for Business** (or SharePoint).
+2. Select your data including headers → **Insert → Table** → on the
+   *Table Design* tab rename the table to exactly **`DashboardStatus`**.
+3. Columns, exactly: **Dashboard | Status | Text | URL**
+   - `Dashboard` — must exactly match the six names shown in the app
+     (the row labels are the lookup keys)
+   - `Status` — `Operational`, `Limited` or `Down` (anything else shows grey)
+   - `Text` — the one-line reason shown in the status board
+   - `URL` — the link the dashboard's button opens
+4. In Power Apps Studio: **Data pane → Add data → Excel Online
+   (Business)** → sign in → pick the file → tick `DashboardStatus` →
+   Connect.
+5. Now paste `UKIMEA-CSLV-Hub-HomeScreen-SVG.pa.yaml` onto a blank
+   Tablet screen. (Pasting before step 4 shows formula errors that clear
+   once the table is connected.)
+
+**How live is it:** the table is read when the app starts and re-pulled
+every 5 minutes by `tmrRefresh` (change its `Duration` to alter the
+cadence — value is in milliseconds). Excel is polled, not pushed, so an
+edit appears on the next refresh, and the "Live from Excel · last
+checked" caption shows when that was. Editing a row's Status in Excel
+recolours the badge, the dot (and its ping), and the ticker entry, and
+swaps the description — no app edits needed. Renaming a dashboard means
+updating it in four places: the Excel `Dashboard` cell, the row label
+(`lblStatusName n`), the SVG card (`imgDash n`) and its overlay button
+(`btnDash n`).
 
 ## The six dashboards
 

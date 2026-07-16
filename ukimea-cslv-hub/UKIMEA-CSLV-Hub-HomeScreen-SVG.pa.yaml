@@ -1,0 +1,952 @@
+# ============================================================================
+# UKIMEA CSLV HUB — Power Apps home screen, SVG + LIVE EXCEL EDITION
+# ----------------------------------------------------------------------------
+# Same design as UKIMEA-CSLV-Hub-HomeScreen.pa.yaml, rebuilt with:
+#
+# 1) SVG GRAPHICS — every visual (header, button cards, status card, status
+#    dots) is an Image control whose Image property is an inline SVG with
+#    its animations baked in as CSS keyframes: smooth 60 fps, they even
+#    play in Studio's edit mode, and no animation timers are needed.
+#
+# 2) HPE-THEMED ENTRANCE — the HPE "element" (the green rectangle outline
+#    from the brand mark) draws itself beside the title, the brand stripe
+#    sweeps across, card borders trace themselves in one after another, a
+#    green accent underline sweeps beneath each dashboard name, the status
+#    card outline draws and its row separators grow in, and the dots pop.
+#    IDLE — a soft light shimmer crosses the brand stripe every 7 s and
+#    each status dot emits a radar "ping" ring in its status colour.
+#
+# 3) LIVE EXCEL DATA — statuses, descriptions, badge colours, dot colours,
+#    the ticker AND the six button links all read from an Excel table.
+#    Update the Excel file and the app follows (on refresh — see below).
+#
+#    EXCEL SETUP (do this BEFORE pasting, or paste shows formula errors
+#    that clear once the data source is added):
+#      a. Put the workbook in OneDrive for Business (or SharePoint).
+#      b. Select your data including headers -> Insert > Table. Then on
+#         the Table Design tab rename the table to exactly: DashboardStatus
+#      c. Columns must be exactly:  Dashboard | Status | Text | URL
+#         - Dashboard: must EXACTLY match the six names shown in the app
+#           (the row labels lblStatusName1-6 are the lookup keys)
+#         - Status: Operational, Limited or Down (anything else shows grey)
+#         - Text: the one-line reason shown in the status board
+#         - URL: the dashboard link the button opens
+#      d. In Power Apps Studio: Data pane > Add data >
+#         "Excel Online (Business)" > sign in > pick the file > tick the
+#         DashboardStatus table > Connect.
+#      e. Now paste this file onto a blank Tablet screen (1366 x 768).
+#    REFRESH: data loads when the app starts and re-pulls every 5 minutes
+#    (tmrRefresh). Change tmrRefresh.Duration to alter the cadence. Excel
+#    is polled, not pushed — changes appear on the next refresh.
+#
+# Because SVGs inside an Image control cannot react to the mouse, each
+# dashboard card has an invisible Classic/Button on top (btnDash1-6) that
+# provides the hover colour change, pressed state, focus ring, tooltip and
+# the Launch() — whose URL comes from the Excel row.
+# NOTE: a dashboard's display name appears in the SVG card (imgDash n),
+# the overlay button Text, and the row label (lblStatusName n) — keep all
+# three matching the Excel Dashboard column.
+#
+# COLOURS — HPE Design System light theme (design-tokens v2.2.3); the
+# ticker uses dark-theme status tokens on background.neutral.xstrong.
+# ============================================================================
+
+# ---- Timers: 1 s clock tick + 5 min Excel refresh ----------------------------
+- tmrClock:
+    Control: Timer
+    Properties:
+      Duration: =1000
+      AutoStart: =true
+      Repeat: =true
+      Visible: =false
+      OnTimerEnd: =Set(varNow, Now())
+
+- tmrRefresh:
+    Control: Timer
+    Properties:
+      Duration: =300000
+      AutoStart: =true
+      Repeat: =true
+      Visible: =false
+      OnTimerEnd: =Refresh(DashboardStatus); Set(varRefreshed, Now())
+
+# ---- Page background (elevation 0) -----------------------------------------
+- recPageBackground:
+    Control: Rectangle
+    Properties:
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =Parent.Height
+      Fill: =ColorValue("#F7F7F7")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Header (SVG: HPE element mark draws itself, brand stripe sweeps with
+#      idle shimmer, title and subtitle rise in) --------------------------------
+- imgHeader:
+    Control: Image
+    Properties:
+      X: =0
+      Y: =0
+      Width: =1366
+      Height: =104
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='1366' height='104' viewBox='0 0 1366 104'>" &
+        "<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='rgba(255,255,255,0)'/><stop offset='0.5' stop-color='rgba(255,255,255,0.65)'/><stop offset='1' stop-color='rgba(255,255,255,0)'/></linearGradient></defs>" &
+        "<style>" &
+        ".stripe{transform-origin:0 0;animation:sweep 0.5s cubic-bezier(0.22,1,0.36,1) both}" &
+        ".shine{animation:shine 7s linear 1.2s infinite}" &
+        ".e{stroke-dasharray:150;stroke-dashoffset:150;animation:draw 0.7s ease-out 0.05s forwards}" &
+        ".t1{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.3s both}" &
+        ".t2{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.45s both}" &
+        "@keyframes sweep{from{transform:scaleX(0)}to{transform:scaleX(1)}}" &
+        "@keyframes shine{0%{transform:translateX(0)}30%{transform:translateX(1966px)}100%{transform:translateX(1966px)}}" &
+        "@keyframes draw{to{stroke-dashoffset:0}}" &
+        "@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}" &
+        "</style>" &
+        "<rect width='1366' height='104' fill='#ffffff'/>" &
+        "<rect y='103' width='1366' height='1' fill='#e6e8e9'/>" &
+        "<rect class='stripe' width='1366' height='6' fill='#01a982'/>" &
+        "<rect class='shine' x='-300' width='260' height='6' fill='url(#g)'/>" &
+        "<rect class='e' x='48' y='20' width='46' height='26' fill='none' stroke='#01a982' stroke-width='5'/>" &
+        "<text class='t1' x='110' y='44' font-family='Segoe UI,Arial,sans-serif' font-size='30' font-weight='700' fill='#292d3a'>UKIMEA CSLV HUB</text>" &
+        "<text class='t2' x='110' y='80' font-family='Segoe UI,Arial,sans-serif' font-size='15' fill='#606a70'>Central access to UKIMEA CSLV reporting dashboards</text>" &
+        "</svg>")
+
+# Personalised greeting — uses the signed-in user's first name.
+- lblGreeting:
+    Control: Label
+    Properties:
+      Text: |-
+        ="Good " & If(Hour(If(IsBlank(varNow), Now(), varNow)) < 12, "morning", Hour(If(IsBlank(varNow), Now(), varNow)) < 17, "afternoon", "evening") & If(IsBlank(User().FullName), "", ", " & First(Split(User().FullName, " ")).Value)
+      X: =766
+      Y: =26
+      Width: =552
+      Height: =26
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+# Live clock — ticks every second via tmrClock.
+- lblClock:
+    Control: Label
+    Properties:
+      Text: |-
+        =With({t: If(IsBlank(varNow), Now(), varNow)}, Text(t, "ddd dd mmm yyyy") & "   " & Text(t, "HH:mm:ss"))
+      X: =766
+      Y: =56
+      Width: =552
+      Height: =22
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      Size: =11
+      Color: =ColorValue("#606A70")
+
+# ---- Dashboard links ---------------------------------------------------------
+- lblSectionDashboards:
+    Control: Label
+    Properties:
+      Text: ="Dashboards"
+      X: =48
+      Y: =116
+      Width: =400
+      Height: =22
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+      Color: =ColorValue("#292D3A")
+
+# Six SVG cards. Entrance per card (staggered): white fill fades in, the
+# border traces itself around the card, the name rises, then a green HPE
+# accent underline sweeps in beneath it.
+- imgDash1:
+    Control: Image
+    Properties:
+      X: =48
+      Y: =146
+      Width: =407
+      Height: =78
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='407' height='78' viewBox='0 0 407 78'>" &
+        "<style>.f{animation:fade 0.4s ease-out 0.25s both}.o{stroke-dasharray:970;stroke-dashoffset:970;animation:draw 0.7s ease-out 0.25s forwards}.t{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.4s both}.u{transform-origin:203px 55px;animation:grow 0.35s ease-out 0.65s both}" &
+        "@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}</style>" &
+        "<rect class='f' x='0.5' y='0.5' width='406' height='77' rx='12' fill='#ffffff'/>" &
+        "<rect class='o' x='0.5' y='0.5' width='406' height='77' rx='12' fill='none' stroke='#d4d8db'/>" &
+        "<text class='t' x='203.5' y='42' text-anchor='middle' font-family='Segoe UI,Arial,sans-serif' font-size='18' font-weight='600' fill='#292d3a'>1% Club</text>" &
+        "<rect class='u' x='183' y='52' width='41' height='3' rx='1.5' fill='#01a982'/></svg>")
+
+- imgDash2:
+    Control: Image
+    Properties:
+      X: =479
+      Y: =146
+      Width: =407
+      Height: =78
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='407' height='78' viewBox='0 0 407 78'>" &
+        "<style>.f{animation:fade 0.4s ease-out 0.33s both}.o{stroke-dasharray:970;stroke-dashoffset:970;animation:draw 0.7s ease-out 0.33s forwards}.t{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.48s both}.u{transform-origin:203px 55px;animation:grow 0.35s ease-out 0.73s both}" &
+        "@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}</style>" &
+        "<rect class='f' x='0.5' y='0.5' width='406' height='77' rx='12' fill='#ffffff'/>" &
+        "<rect class='o' x='0.5' y='0.5' width='406' height='77' rx='12' fill='none' stroke='#d4d8db'/>" &
+        "<text class='t' x='203.5' y='42' text-anchor='middle' font-family='Segoe UI,Arial,sans-serif' font-size='18' font-weight='600' fill='#292d3a'>Attach Wizard [Beta]</text>" &
+        "<rect class='u' x='183' y='52' width='41' height='3' rx='1.5' fill='#01a982'/></svg>")
+
+- imgDash3:
+    Control: Image
+    Properties:
+      X: =910
+      Y: =146
+      Width: =407
+      Height: =78
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='407' height='78' viewBox='0 0 407 78'>" &
+        "<style>.f{animation:fade 0.4s ease-out 0.41s both}.o{stroke-dasharray:970;stroke-dashoffset:970;animation:draw 0.7s ease-out 0.41s forwards}.t{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.56s both}.u{transform-origin:203px 55px;animation:grow 0.35s ease-out 0.81s both}" &
+        "@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}</style>" &
+        "<rect class='f' x='0.5' y='0.5' width='406' height='77' rx='12' fill='#ffffff'/>" &
+        "<rect class='o' x='0.5' y='0.5' width='406' height='77' rx='12' fill='none' stroke='#d4d8db'/>" &
+        "<text class='t' x='203.5' y='42' text-anchor='middle' font-family='Segoe UI,Arial,sans-serif' font-size='18' font-weight='600' fill='#292d3a'>SFDC Hygiene</text>" &
+        "<rect class='u' x='183' y='52' width='41' height='3' rx='1.5' fill='#01a982'/></svg>")
+
+- imgDash4:
+    Control: Image
+    Properties:
+      X: =48
+      Y: =236
+      Width: =407
+      Height: =78
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='407' height='78' viewBox='0 0 407 78'>" &
+        "<style>.f{animation:fade 0.4s ease-out 0.49s both}.o{stroke-dasharray:970;stroke-dashoffset:970;animation:draw 0.7s ease-out 0.49s forwards}.t{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.64s both}.u{transform-origin:203px 55px;animation:grow 0.35s ease-out 0.89s both}" &
+        "@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}</style>" &
+        "<rect class='f' x='0.5' y='0.5' width='406' height='77' rx='12' fill='#ffffff'/>" &
+        "<rect class='o' x='0.5' y='0.5' width='406' height='77' rx='12' fill='none' stroke='#d4d8db'/>" &
+        "<text class='t' x='203.5' y='42' text-anchor='middle' font-family='Segoe UI,Arial,sans-serif' font-size='18' font-weight='600' fill='#292d3a'>UKIMEA Compute Backlog</text>" &
+        "<rect class='u' x='183' y='52' width='41' height='3' rx='1.5' fill='#01a982'/></svg>")
+
+- imgDash5:
+    Control: Image
+    Properties:
+      X: =479
+      Y: =236
+      Width: =407
+      Height: =78
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='407' height='78' viewBox='0 0 407 78'>" &
+        "<style>.f{animation:fade 0.4s ease-out 0.57s both}.o{stroke-dasharray:970;stroke-dashoffset:970;animation:draw 0.7s ease-out 0.57s forwards}.t{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.72s both}.u{transform-origin:203px 55px;animation:grow 0.35s ease-out 0.97s both}" &
+        "@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}</style>" &
+        "<rect class='f' x='0.5' y='0.5' width='406' height='77' rx='12' fill='#ffffff'/>" &
+        "<rect class='o' x='0.5' y='0.5' width='406' height='77' rx='12' fill='none' stroke='#d4d8db'/>" &
+        "<text class='t' x='203.5' y='42' text-anchor='middle' font-family='Segoe UI,Arial,sans-serif' font-size='18' font-weight='600' fill='#292d3a'>UKIMEA OS Channel Actuals</text>" &
+        "<rect class='u' x='183' y='52' width='41' height='3' rx='1.5' fill='#01a982'/></svg>")
+
+- imgDash6:
+    Control: Image
+    Properties:
+      X: =910
+      Y: =236
+      Width: =407
+      Height: =78
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='407' height='78' viewBox='0 0 407 78'>" &
+        "<style>.f{animation:fade 0.4s ease-out 0.65s both}.o{stroke-dasharray:970;stroke-dashoffset:970;animation:draw 0.7s ease-out 0.65s forwards}.t{animation:rise 0.45s cubic-bezier(0.22,1,0.36,1) 0.8s both}.u{transform-origin:203px 55px;animation:grow 0.35s ease-out 1.05s both}" &
+        "@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}</style>" &
+        "<rect class='f' x='0.5' y='0.5' width='406' height='77' rx='12' fill='#ffffff'/>" &
+        "<rect class='o' x='0.5' y='0.5' width='406' height='77' rx='12' fill='none' stroke='#d4d8db'/>" &
+        "<text class='t' x='203.5' y='42' text-anchor='middle' font-family='Segoe UI,Arial,sans-serif' font-size='18' font-weight='600' fill='#292d3a'>3PAR EOSL Tracker</text>" &
+        "<rect class='u' x='183' y='52' width='41' height='3' rx='1.5' fill='#01a982'/></svg>")
+
+# Invisible interaction layer: transparent at rest so the SVG card shows
+# through; on hover it paints solid HPE green with white text. The link
+# comes from the Excel row whose Dashboard matches this row's name label.
+- btnDash1:
+    Control: Classic/Button
+    Properties:
+      Text: ="1% Club"
+      OnSelect: =Launch(LookUp(DashboardStatus, Dashboard = lblStatusName1.Text, URL))
+      Tooltip: ="Open 1% Club"
+      X: =48
+      Y: =146
+      Width: =407
+      Height: =78
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+
+- btnDash2:
+    Control: Classic/Button
+    Properties:
+      Text: ="Attach Wizard [Beta]"
+      OnSelect: =Launch(LookUp(DashboardStatus, Dashboard = lblStatusName2.Text, URL))
+      Tooltip: ="Open Attach Wizard [Beta]"
+      X: =479
+      Y: =146
+      Width: =407
+      Height: =78
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+
+- btnDash3:
+    Control: Classic/Button
+    Properties:
+      Text: ="SFDC Hygiene"
+      OnSelect: =Launch(LookUp(DashboardStatus, Dashboard = lblStatusName3.Text, URL))
+      Tooltip: ="Open SFDC Hygiene"
+      X: =910
+      Y: =146
+      Width: =407
+      Height: =78
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+
+- btnDash4:
+    Control: Classic/Button
+    Properties:
+      Text: ="UKIMEA Compute Backlog"
+      OnSelect: =Launch(LookUp(DashboardStatus, Dashboard = lblStatusName4.Text, URL))
+      Tooltip: ="Open UKIMEA Compute Backlog"
+      X: =48
+      Y: =236
+      Width: =407
+      Height: =78
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+
+- btnDash5:
+    Control: Classic/Button
+    Properties:
+      Text: ="UKIMEA OS Channel Actuals"
+      OnSelect: =Launch(LookUp(DashboardStatus, Dashboard = lblStatusName5.Text, URL))
+      Tooltip: ="Open UKIMEA OS Channel Actuals"
+      X: =479
+      Y: =236
+      Width: =407
+      Height: =78
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+
+- btnDash6:
+    Control: Classic/Button
+    Properties:
+      Text: ="3PAR EOSL Tracker"
+      OnSelect: =Launch(LookUp(DashboardStatus, Dashboard = lblStatusName6.Text, URL))
+      Tooltip: ="Open 3PAR EOSL Tracker"
+      X: =910
+      Y: =236
+      Width: =407
+      Height: =78
+      Fill: =RGBA(0, 0, 0, 0)
+      Color: =RGBA(255, 255, 255, 0)
+      BorderColor: =RGBA(0, 0, 0, 0)
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+
+# ---- Status board (SVG shell: card outline traces itself, title fades,
+#      row separators grow in one after another) --------------------------------
+- imgStatusCard:
+    Control: Image
+    Properties:
+      X: =48
+      Y: =330
+      Width: =1270
+      Height: =378
+      Image: |-
+        ="data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='1270' height='378' viewBox='0 0 1270 378'>" &
+        "<style>.f{animation:fade 0.4s ease-out 0.7s both}.o{stroke-dasharray:3300;stroke-dashoffset:3300;animation:draw 0.9s ease-out 0.7s forwards}.t{animation:fade 0.4s ease-out 0.9s both}" &
+        ".s1{transform-origin:32px 0;animation:grow 0.4s ease-out 0.9s both}.s2{transform-origin:32px 0;animation:grow 0.4s ease-out 0.96s both}.s3{transform-origin:32px 0;animation:grow 0.4s ease-out 1.02s both}.s4{transform-origin:32px 0;animation:grow 0.4s ease-out 1.08s both}.s5{transform-origin:32px 0;animation:grow 0.4s ease-out 1.14s both}.s6{transform-origin:32px 0;animation:grow 0.4s ease-out 1.2s both}" &
+        "@keyframes fade{from{opacity:0}to{opacity:1}}@keyframes draw{to{stroke-dashoffset:0}}@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}</style>" &
+        "<rect class='f' x='0.5' y='0.5' width='1269' height='377' rx='12' fill='#ffffff'/>" &
+        "<rect class='o' x='0.5' y='0.5' width='1269' height='377' rx='12' fill='none' stroke='#d4d8db'/>" &
+        "<text class='t' x='32' y='37' font-family='Segoe UI,Arial,sans-serif' font-size='20' font-weight='600' fill='#292d3a'>Dashboard status</text>" &
+        "<g fill='#e6e8e9'>" &
+        "<rect class='s1' x='32' y='52' width='1206' height='1'/>" &
+        "<rect class='s2' x='32' y='107' width='1206' height='1'/>" &
+        "<rect class='s3' x='32' y='159' width='1206' height='1'/>" &
+        "<rect class='s4' x='32' y='211' width='1206' height='1'/>" &
+        "<rect class='s5' x='32' y='263' width='1206' height='1'/>" &
+        "<rect class='s6' x='32' y='315' width='1206' height='1'/>" &
+        "</g></svg>")
+
+# Live-data caption: shows when the Excel table was last re-pulled.
+- lblStatusUpdated:
+    Control: Label
+    Properties:
+      Text: |-
+        ="Live from Excel · last checked " & Text(If(IsBlank(varRefreshed), Now(), varRefreshed), "HH:mm")
+      X: =806
+      Y: =350
+      Width: =480
+      Height: =20
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      Size: =11
+      Color: =ColorValue("#606A70")
+
+# ---- Status rows -----------------------------------------------------------
+# Each row: SVG dot (pop-in + radar ping, colour follows the Excel Status),
+# name label (THE LOOKUP KEY — must match the Excel Dashboard column),
+# description (Excel Text column), badge (Excel Status; tint follows it).
+- imgStatusDot1:
+    Control: Image
+    Properties:
+      X: =75
+      Y: =392
+      Width: =40
+      Height: =40
+      Image: |-
+        =With({c: If(btnStatusBadge1.Text = "Operational", "#009a71", btnStatusBadge1.Text = "Limited", "#d36d00", btnStatusBadge1.Text = "Down", "#cc1f1a", "#606a70")},
+        "data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'>" &
+        "<style>.d{transform-origin:20px 20px;animation:pop 0.4s ease-out 0.9s both}.h{animation:ping 2.8s ease-out 1.4s infinite}" &
+        "@keyframes pop{0%{opacity:0;transform:scale(0.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}@keyframes ping{0%{r:7px;opacity:0.45}70%{r:17px;opacity:0}100%{r:17px;opacity:0}}</style>" &
+        "<circle class='h' cx='20' cy='20' r='7' opacity='0' fill='none' stroke='" & c & "' stroke-width='2'/>" &
+        "<circle class='d' cx='20' cy='20' r='7' fill='" & c & "'/></svg>"))
+
+- lblStatusName1:
+    Control: Label
+    Properties:
+      Text: ="1% Club"
+      X: =118
+      Y: =386
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc1:
+    Control: Label
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName1.Text, ThisRecord.Text)
+      X: =440
+      Y: =386
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge1:
+    Control: Classic/Button
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName1.Text, Status)
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =398
+      Width: =150
+      Height: =28
+      Fill: =If(Self.Text = "Operational", ColorValue("#D1FFEE"), Self.Text = "Limited", ColorValue("#FFF3DD"), Self.Text = "Down", ColorValue("#FFECEC"), RGBA(0, 0, 0, 10))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- imgStatusDot2:
+    Control: Image
+    Properties:
+      X: =75
+      Y: =444
+      Width: =40
+      Height: =40
+      Image: |-
+        =With({c: If(btnStatusBadge2.Text = "Operational", "#009a71", btnStatusBadge2.Text = "Limited", "#d36d00", btnStatusBadge2.Text = "Down", "#cc1f1a", "#606a70")},
+        "data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'>" &
+        "<style>.d{transform-origin:20px 20px;animation:pop 0.4s ease-out 0.96s both}.h{animation:ping 2.8s ease-out 1.46s infinite}" &
+        "@keyframes pop{0%{opacity:0;transform:scale(0.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}@keyframes ping{0%{r:7px;opacity:0.45}70%{r:17px;opacity:0}100%{r:17px;opacity:0}}</style>" &
+        "<circle class='h' cx='20' cy='20' r='7' opacity='0' fill='none' stroke='" & c & "' stroke-width='2'/>" &
+        "<circle class='d' cx='20' cy='20' r='7' fill='" & c & "'/></svg>"))
+
+- lblStatusName2:
+    Control: Label
+    Properties:
+      Text: ="Attach Wizard [Beta]"
+      X: =118
+      Y: =438
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc2:
+    Control: Label
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName2.Text, ThisRecord.Text)
+      X: =440
+      Y: =438
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge2:
+    Control: Classic/Button
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName2.Text, Status)
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =450
+      Width: =150
+      Height: =28
+      Fill: =If(Self.Text = "Operational", ColorValue("#D1FFEE"), Self.Text = "Limited", ColorValue("#FFF3DD"), Self.Text = "Down", ColorValue("#FFECEC"), RGBA(0, 0, 0, 10))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- imgStatusDot3:
+    Control: Image
+    Properties:
+      X: =75
+      Y: =496
+      Width: =40
+      Height: =40
+      Image: |-
+        =With({c: If(btnStatusBadge3.Text = "Operational", "#009a71", btnStatusBadge3.Text = "Limited", "#d36d00", btnStatusBadge3.Text = "Down", "#cc1f1a", "#606a70")},
+        "data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'>" &
+        "<style>.d{transform-origin:20px 20px;animation:pop 0.4s ease-out 1.02s both}.h{animation:ping 2.8s ease-out 1.52s infinite}" &
+        "@keyframes pop{0%{opacity:0;transform:scale(0.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}@keyframes ping{0%{r:7px;opacity:0.45}70%{r:17px;opacity:0}100%{r:17px;opacity:0}}</style>" &
+        "<circle class='h' cx='20' cy='20' r='7' opacity='0' fill='none' stroke='" & c & "' stroke-width='2'/>" &
+        "<circle class='d' cx='20' cy='20' r='7' fill='" & c & "'/></svg>"))
+
+- lblStatusName3:
+    Control: Label
+    Properties:
+      Text: ="SFDC Hygiene"
+      X: =118
+      Y: =490
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc3:
+    Control: Label
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName3.Text, ThisRecord.Text)
+      X: =440
+      Y: =490
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge3:
+    Control: Classic/Button
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName3.Text, Status)
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =502
+      Width: =150
+      Height: =28
+      Fill: =If(Self.Text = "Operational", ColorValue("#D1FFEE"), Self.Text = "Limited", ColorValue("#FFF3DD"), Self.Text = "Down", ColorValue("#FFECEC"), RGBA(0, 0, 0, 10))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- imgStatusDot4:
+    Control: Image
+    Properties:
+      X: =75
+      Y: =548
+      Width: =40
+      Height: =40
+      Image: |-
+        =With({c: If(btnStatusBadge4.Text = "Operational", "#009a71", btnStatusBadge4.Text = "Limited", "#d36d00", btnStatusBadge4.Text = "Down", "#cc1f1a", "#606a70")},
+        "data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'>" &
+        "<style>.d{transform-origin:20px 20px;animation:pop 0.4s ease-out 1.08s both}.h{animation:ping 2.8s ease-out 1.58s infinite}" &
+        "@keyframes pop{0%{opacity:0;transform:scale(0.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}@keyframes ping{0%{r:7px;opacity:0.45}70%{r:17px;opacity:0}100%{r:17px;opacity:0}}</style>" &
+        "<circle class='h' cx='20' cy='20' r='7' opacity='0' fill='none' stroke='" & c & "' stroke-width='2'/>" &
+        "<circle class='d' cx='20' cy='20' r='7' fill='" & c & "'/></svg>"))
+
+- lblStatusName4:
+    Control: Label
+    Properties:
+      Text: ="UKIMEA Compute Backlog"
+      X: =118
+      Y: =542
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc4:
+    Control: Label
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName4.Text, ThisRecord.Text)
+      X: =440
+      Y: =542
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge4:
+    Control: Classic/Button
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName4.Text, Status)
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =554
+      Width: =150
+      Height: =28
+      Fill: =If(Self.Text = "Operational", ColorValue("#D1FFEE"), Self.Text = "Limited", ColorValue("#FFF3DD"), Self.Text = "Down", ColorValue("#FFECEC"), RGBA(0, 0, 0, 10))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- imgStatusDot5:
+    Control: Image
+    Properties:
+      X: =75
+      Y: =600
+      Width: =40
+      Height: =40
+      Image: |-
+        =With({c: If(btnStatusBadge5.Text = "Operational", "#009a71", btnStatusBadge5.Text = "Limited", "#d36d00", btnStatusBadge5.Text = "Down", "#cc1f1a", "#606a70")},
+        "data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'>" &
+        "<style>.d{transform-origin:20px 20px;animation:pop 0.4s ease-out 1.14s both}.h{animation:ping 2.8s ease-out 1.64s infinite}" &
+        "@keyframes pop{0%{opacity:0;transform:scale(0.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}@keyframes ping{0%{r:7px;opacity:0.45}70%{r:17px;opacity:0}100%{r:17px;opacity:0}}</style>" &
+        "<circle class='h' cx='20' cy='20' r='7' opacity='0' fill='none' stroke='" & c & "' stroke-width='2'/>" &
+        "<circle class='d' cx='20' cy='20' r='7' fill='" & c & "'/></svg>"))
+
+- lblStatusName5:
+    Control: Label
+    Properties:
+      Text: ="UKIMEA OS Channel Actuals"
+      X: =118
+      Y: =594
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc5:
+    Control: Label
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName5.Text, ThisRecord.Text)
+      X: =440
+      Y: =594
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge5:
+    Control: Classic/Button
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName5.Text, Status)
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =606
+      Width: =150
+      Height: =28
+      Fill: =If(Self.Text = "Operational", ColorValue("#D1FFEE"), Self.Text = "Limited", ColorValue("#FFF3DD"), Self.Text = "Down", ColorValue("#FFECEC"), RGBA(0, 0, 0, 10))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- imgStatusDot6:
+    Control: Image
+    Properties:
+      X: =75
+      Y: =652
+      Width: =40
+      Height: =40
+      Image: |-
+        =With({c: If(btnStatusBadge6.Text = "Operational", "#009a71", btnStatusBadge6.Text = "Limited", "#d36d00", btnStatusBadge6.Text = "Down", "#cc1f1a", "#606a70")},
+        "data:image/svg+xml;utf8," & EncodeUrl(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'>" &
+        "<style>.d{transform-origin:20px 20px;animation:pop 0.4s ease-out 1.2s both}.h{animation:ping 2.8s ease-out 1.7s infinite}" &
+        "@keyframes pop{0%{opacity:0;transform:scale(0.3)}70%{opacity:1;transform:scale(1.15)}100%{opacity:1;transform:scale(1)}}@keyframes ping{0%{r:7px;opacity:0.45}70%{r:17px;opacity:0}100%{r:17px;opacity:0}}</style>" &
+        "<circle class='h' cx='20' cy='20' r='7' opacity='0' fill='none' stroke='" & c & "' stroke-width='2'/>" &
+        "<circle class='d' cx='20' cy='20' r='7' fill='" & c & "'/></svg>"))
+
+- lblStatusName6:
+    Control: Label
+    Properties:
+      Text: ="3PAR EOSL Tracker"
+      X: =118
+      Y: =646
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc6:
+    Control: Label
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName6.Text, ThisRecord.Text)
+      X: =440
+      Y: =646
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge6:
+    Control: Classic/Button
+    Properties:
+      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName6.Text, Status)
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =658
+      Width: =150
+      Height: =28
+      Fill: =If(Self.Text = "Operational", ColorValue("#D1FFEE"), Self.Text = "Limited", ColorValue("#FFF3DD"), Self.Text = "Down", ColorValue("#FFECEC"), RGBA(0, 0, 0, 10))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+# ---- Credit --------------------------------------------------------------------
+- lblArchitects:
+    Control: Label
+    Properties:
+      Text: |-
+        ="Dashboard architects: Ben Robertson · Alex Cohen"
+      X: =48
+      Y: =706
+      Width: =1270
+      Height: =18
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      Size: =10
+      Color: =ColorValue("#606A70")
+
+# ---- Status ticker (NYSE style) -------------------------------------------------
+# Auto-syncing marquee: content is generated from the name/badge controls,
+# which are themselves fed by Excel — so the ticker is Excel-driven too.
+#   Operational -> ▲ green #05CC93 · Limited -> ◆ amber #EC8C25
+#   Down -> ▼ red #FC6161 · anything else -> ● grey #7D8A92
+- htmlTicker:
+    Control: HtmlViewer
+    Properties:
+      X: =0
+      Y: =728
+      Width: =Parent.Width
+      Height: =40
+      Fill: =ColorValue("#292D3A")
+      BorderStyle: =BorderStyle.None
+      PaddingLeft: =0
+      PaddingRight: =0
+      PaddingTop: =0
+      PaddingBottom: =0
+      HtmlText: |-
+        ="<div style='font-family:Segoe UI,Arial,sans-serif;font-size:15px;line-height:38px;letter-spacing:1px;white-space:nowrap;'><marquee scrollamount='4'>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName1.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge1.Text = "Operational", "#05cc93", btnStatusBadge1.Text = "Limited", "#ec8c25", btnStatusBadge1.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge1.Text = "Operational", "▲", btnStatusBadge1.Text = "Limited", "◆", btnStatusBadge1.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge1.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName2.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge2.Text = "Operational", "#05cc93", btnStatusBadge2.Text = "Limited", "#ec8c25", btnStatusBadge2.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge2.Text = "Operational", "▲", btnStatusBadge2.Text = "Limited", "◆", btnStatusBadge2.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge2.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName3.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge3.Text = "Operational", "#05cc93", btnStatusBadge3.Text = "Limited", "#ec8c25", btnStatusBadge3.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge3.Text = "Operational", "▲", btnStatusBadge3.Text = "Limited", "◆", btnStatusBadge3.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge3.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName4.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge4.Text = "Operational", "#05cc93", btnStatusBadge4.Text = "Limited", "#ec8c25", btnStatusBadge4.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge4.Text = "Operational", "▲", btnStatusBadge4.Text = "Limited", "◆", btnStatusBadge4.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge4.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName5.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge5.Text = "Operational", "#05cc93", btnStatusBadge5.Text = "Limited", "#ec8c25", btnStatusBadge5.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge5.Text = "Operational", "▲", btnStatusBadge5.Text = "Limited", "◆", btnStatusBadge5.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge5.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName6.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge6.Text = "Operational", "#05cc93", btnStatusBadge6.Text = "Limited", "#ec8c25", btnStatusBadge6.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge6.Text = "Operational", "▲", btnStatusBadge6.Text = "Limited", "◆", btnStatusBadge6.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge6.Text) & "</span>" &
+        "</marquee></div>"
