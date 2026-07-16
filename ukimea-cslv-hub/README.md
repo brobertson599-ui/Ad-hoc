@@ -44,6 +44,12 @@ of `btnDash4` / `lblStatusName4` if the full name differs.)
    `OnSelect` property with the real link, e.g.
    `Launch("https://app.powerbi.com/...")`.
 
+**If you edit the YAML by hand:** any formula or text containing a colon
+followed by a space (e.g. `With({p: ...})`, `"Last updated: ..."`) must sit
+on its own line under a `|-` marker, the way the file already formats them.
+Putting one back on the same line as its property name makes Power Apps
+reject the paste with error PA1001 `YamlInvalidSyntax`.
+
 ## Animations & extras
 
 Everything is driven by three invisible **Timer** controls (Power Apps'

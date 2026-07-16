@@ -106,7 +106,8 @@
     Properties:
       X: =0
       Y: =0
-      Width: =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 500)))}, Parent.Width * (1 - Power(1 - p, 3)))
+      Width: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 500)))}, Parent.Width * (1 - Power(1 - p, 3)))
       Height: =6
       Fill: =ColorValue("#01A982")
       BorderStyle: =BorderStyle.None
@@ -129,13 +130,15 @@
     Properties:
       Text: ="UKIMEA CSLV HUB"
       X: =48
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 400)))}, 22 + 12 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 400)))}, 22 + 12 * Power(1 - p, 3))
       Width: =700
       Height: =40
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Bold
       Size: =24
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 400)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 400)))}, RGBA(41, 45, 58, p))
 
 - lblAppSubtitle:
     Control: Label
@@ -147,7 +150,8 @@
       Height: =24
       Font: =Font.'Open Sans'
       Size: =12
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 120) / 400)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 120) / 400)))}, RGBA(96, 106, 112, p))
 
 # Personalised greeting — uses the signed-in user's first name.
 - lblGreeting:
@@ -156,20 +160,23 @@
       Text: |-
         ="Good " & If(Hour(If(IsBlank(varNow), Now(), varNow)) < 12, "morning", Hour(If(IsBlank(varNow), Now(), varNow)) < 17, "afternoon", "evening") & If(IsBlank(User().FullName), "", ", " & First(Split(User().FullName, " ")).Value)
       X: =766
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, 26 + 10 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, 26 + 10 * Power(1 - p, 3))
       Width: =552
       Height: =26
       Align: =Align.Right
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, RGBA(41, 45, 58, p))
 
 # Live clock — ticks every second via tmrClock.
 - lblClock:
     Control: Label
     Properties:
-      Text: =With({t: If(IsBlank(varNow), Now(), varNow)}, Text(t, "ddd dd mmm yyyy") & "   " & Text(t, "HH:mm:ss"))
+      Text: |-
+        =With({t: If(IsBlank(varNow), Now(), varNow)}, Text(t, "ddd dd mmm yyyy") & "   " & Text(t, "HH:mm:ss"))
       X: =766
       Y: =56
       Width: =552
@@ -177,7 +184,8 @@
       Align: =Align.Right
       Font: =Font.'Open Sans'
       Size: =11
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, RGBA(96, 106, 112, p))
 
 # ---- Dashboard links ---------------------------------------------------------
 - lblSectionDashboards:
@@ -191,7 +199,8 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =14
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 200) / 400)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 200) / 400)))}, RGBA(41, 45, 58, p))
 
 # Six buttons, 2 rows x 3. Each slides up 20px and fades in, staggered
 # left-to-right, top-to-bottom (delays 250/330/410/490/570/650 ms).
@@ -203,12 +212,16 @@
       Tooltip: ="Open 1% Club"
       AccessibleLabel: ="Open 1% Club"
       X: =48
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, 146 + 20 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, 146 + 20 * Power(1 - p, 3))
       Width: =407
       Height: =78
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(255, 255, 255, p))
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(41, 45, 58, p))
-      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(212, 216, 219, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(255, 255, 255, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -235,12 +248,16 @@
       Tooltip: ="Open Attach Wizard [Beta]"
       AccessibleLabel: ="Open Attach Wizard [Beta]"
       X: =479
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, 146 + 20 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, 146 + 20 * Power(1 - p, 3))
       Width: =407
       Height: =78
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(255, 255, 255, p))
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(41, 45, 58, p))
-      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(212, 216, 219, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(255, 255, 255, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -267,12 +284,16 @@
       Tooltip: ="Open SFDC Hygiene"
       AccessibleLabel: ="Open SFDC Hygiene"
       X: =910
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, 146 + 20 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, 146 + 20 * Power(1 - p, 3))
       Width: =407
       Height: =78
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(255, 255, 255, p))
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(41, 45, 58, p))
-      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(212, 216, 219, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(255, 255, 255, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -299,12 +320,16 @@
       Tooltip: ="Open UKIMEA Compute Backlog"
       AccessibleLabel: ="Open UKIMEA Compute Backlog"
       X: =48
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, 236 + 20 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, 236 + 20 * Power(1 - p, 3))
       Width: =407
       Height: =78
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(255, 255, 255, p))
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(41, 45, 58, p))
-      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(212, 216, 219, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(255, 255, 255, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -331,12 +356,16 @@
       Tooltip: ="Open UKIMEA OS Channel Actuals"
       AccessibleLabel: ="Open UKIMEA OS Channel Actuals"
       X: =479
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, 236 + 20 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, 236 + 20 * Power(1 - p, 3))
       Width: =407
       Height: =78
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(255, 255, 255, p))
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(41, 45, 58, p))
-      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(212, 216, 219, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(255, 255, 255, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -363,12 +392,16 @@
       Tooltip: ="Open 3PAR EOSL Tracker"
       AccessibleLabel: ="Open 3PAR EOSL Tracker"
       X: =910
-      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, 236 + 20 * Power(1 - p, 3))
+      Y: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, 236 + 20 * Power(1 - p, 3))
       Width: =407
       Height: =78
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(255, 255, 255, p))
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(41, 45, 58, p))
-      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(212, 216, 219, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(255, 255, 255, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -400,10 +433,12 @@
       Y: =330
       Width: =1270
       Height: =378
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(255, 255, 255, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(255, 255, 255, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(212, 216, 219, p))
+      BorderColor: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       RadiusTopLeft: =12
@@ -422,12 +457,14 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =15
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(41, 45, 58, p))
 
 - lblStatusUpdated:
     Control: Label
     Properties:
-      Text: ="Last updated: 16 Jul 2026, 09:00"
+      Text: |-
+        ="Last updated: 16 Jul 2026, 09:00"
       X: =806
       Y: =350
       Width: =480
@@ -435,7 +472,8 @@
       Align: =Align.Right
       Font: =Font.'Open Sans'
       Size: =11
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(96, 106, 112, p))
 
 - recStatusRule0:
     Control: Rectangle
@@ -444,7 +482,8 @@
       Y: =382
       Width: =1206
       Height: =1
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -458,7 +497,8 @@
       Y: =405
       Width: =14
       Height: =14
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -474,7 +514,8 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc1:
     Control: Label
@@ -487,7 +528,8 @@
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       Size: =11.5
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(96, 106, 112, p))
 
 # Badge colours — OK: #D1FFEE · Warning: #FFF3DD · Down: #FFECEC · Unknown: RGBA(0,0,0,10)
 - btnStatusBadge1:
@@ -500,10 +542,12 @@
       Y: =398
       Width: =150
       Height: =28
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(209, 255, 238, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(209, 255, 238, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(62, 69, 80, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
@@ -522,7 +566,8 @@
       Y: =437
       Width: =1206
       Height: =1
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -534,7 +579,8 @@
       Y: =457
       Width: =14
       Height: =14
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -550,7 +596,8 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc2:
     Control: Label
@@ -563,7 +610,8 @@
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       Size: =11.5
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge2:
     Control: Classic/Button
@@ -575,10 +623,12 @@
       Y: =450
       Width: =150
       Height: =28
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(209, 255, 238, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(209, 255, 238, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(62, 69, 80, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
@@ -597,7 +647,8 @@
       Y: =489
       Width: =1206
       Height: =1
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -609,7 +660,8 @@
       Y: =509
       Width: =14
       Height: =14
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -625,7 +677,8 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc3:
     Control: Label
@@ -638,7 +691,8 @@
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       Size: =11.5
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge3:
     Control: Classic/Button
@@ -650,10 +704,12 @@
       Y: =502
       Width: =150
       Height: =28
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(209, 255, 238, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(209, 255, 238, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(62, 69, 80, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
@@ -672,7 +728,8 @@
       Y: =541
       Width: =1206
       Height: =1
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -684,7 +741,8 @@
       Y: =561
       Width: =14
       Height: =14
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(211, 109, 0, p * (0.55 + 0.45 * ph)))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(211, 109, 0, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -700,7 +758,8 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc4:
     Control: Label
@@ -713,7 +772,8 @@
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       Size: =11.5
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge4:
     Control: Classic/Button
@@ -725,10 +785,12 @@
       Y: =554
       Width: =150
       Height: =28
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(255, 243, 221, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(255, 243, 221, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(62, 69, 80, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
@@ -747,7 +809,8 @@
       Y: =593
       Width: =1206
       Height: =1
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -759,7 +822,8 @@
       Y: =613
       Width: =14
       Height: =14
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -775,7 +839,8 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc5:
     Control: Label
@@ -788,7 +853,8 @@
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       Size: =11.5
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge5:
     Control: Classic/Button
@@ -800,10 +866,12 @@
       Y: =606
       Width: =150
       Height: =28
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(209, 255, 238, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(209, 255, 238, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(62, 69, 80, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
@@ -822,7 +890,8 @@
       Y: =645
       Width: =1206
       Height: =1
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -834,7 +903,8 @@
       Y: =665
       Width: =14
       Height: =14
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(204, 31, 26, p * (0.55 + 0.45 * ph)))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(204, 31, 26, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
@@ -850,7 +920,8 @@
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(41, 45, 58, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc6:
     Control: Label
@@ -863,7 +934,8 @@
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       Size: =11.5
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge6:
     Control: Classic/Button
@@ -875,10 +947,12 @@
       Y: =658
       Width: =150
       Height: =28
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(255, 236, 236, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(255, 236, 236, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(62, 69, 80, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
@@ -894,7 +968,8 @@
 - lblArchitects:
     Control: Label
     Properties:
-      Text: ="Dashboard architects: Ben Robertson · Alex Cohen"
+      Text: |-
+        ="Dashboard architects: Ben Robertson · Alex Cohen"
       X: =48
       Y: =706
       Width: =1270
@@ -902,7 +977,8 @@
       Align: =Align.Right
       Font: =Font.'Open Sans'
       Size: =10
-      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1150) / 350)))}, RGBA(96, 106, 112, p))
+      Color: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1150) / 350)))}, RGBA(96, 106, 112, p))
 
 # ---- Status ticker (NYSE style) -------------------------------------------------
 # Dark band pinned to the bottom of the screen. The marquee content reads
@@ -919,7 +995,8 @@
       Y: =728
       Width: =Parent.Width
       Height: =40
-      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1150) / 350)))}, RGBA(41, 45, 58, p))
+      Fill: |-
+        =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1150) / 350)))}, RGBA(41, 45, 58, p))
       BorderStyle: =BorderStyle.None
       PaddingLeft: =0
       PaddingRight: =0
