@@ -57,7 +57,42 @@
     .anim-sweep, .anim-rise, .anim-fade { animation: none; }
     .dot { animation: none !important; }
     a.dash-btn { transition: none; }
+    .ticker-track { animation: none !important; }
   }
+
+  /* ---- Stock-exchange status ticker (dark band, bottom of screen) ---- */
+  @keyframes tickerScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .ticker {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    background: #292d3a;              /* background.neutral.xstrong */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    z-index: 20;
+  }
+  .ticker-track {
+    display: flex;
+    white-space: nowrap;
+    animation: tickerScroll 36s linear infinite;
+  }
+  .ticker:hover .ticker-track { animation-play-state: paused; }
+  .ticker-group { display: flex; }
+  .ticker-item {
+    margin-right: 56px;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .ticker-name { color: #ffffff; font-weight: 600; margin-right: 10px; }
+  .ticker-status { font-weight: 700; }
+  .t-ok   { color: #05cc93; }        /* dark-theme icon.ok */
+  .t-warn { color: #ec8c25; }        /* dark-theme icon.warning */
+  .t-crit { color: #fc6161; }        /* dark-theme icon.critical */
+  .t-unk  { color: #7d8a92; }        /* dark-theme icon.unknown */
 
   /* ---- Header ---- */
   .brand-stripe { height: 6px; background: var(--brand); }
@@ -235,7 +270,7 @@
     max-width: 1366px;
     width: 100%;
     margin: 0 auto;
-    padding: 10px 48px 20px;
+    padding: 10px 48px 56px;   /* bottom padding clears the fixed ticker band */
     text-align: right;
     color: var(--text-weak);
     font-size: 0.85rem;
@@ -328,6 +363,29 @@
   <footer class="credit anim-fade" style="animation-delay:1150ms">
     Dashboard architects: Ben Robertson &middot; Alex Cohen
   </footer>
+
+  <!-- Status ticker: in the Power Apps build this is htmlTicker, whose
+       content is generated from the badge controls so it stays in sync. -->
+  <div class="ticker anim-fade" style="animation-delay:1150ms" aria-label="Dashboard status ticker">
+    <div class="ticker-track">
+      <div class="ticker-group">
+        <span class="ticker-item"><span class="ticker-name">1% Club</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">Attach Wizard [Beta]</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">SFDC Hygiene</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">UKIMEA Compute Backlog</span><span class="ticker-status t-warn">&#9670; Degraded</span></span>
+        <span class="ticker-item"><span class="ticker-name">UKIMEA OS Channel Actuals</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">3PAR EOSL Tracker</span><span class="ticker-status t-crit">&#9660; Down</span></span>
+      </div>
+      <div class="ticker-group" aria-hidden="true">
+        <span class="ticker-item"><span class="ticker-name">1% Club</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">Attach Wizard [Beta]</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">SFDC Hygiene</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">UKIMEA Compute Backlog</span><span class="ticker-status t-warn">&#9670; Degraded</span></span>
+        <span class="ticker-item"><span class="ticker-name">UKIMEA OS Channel Actuals</span><span class="ticker-status t-ok">&#9650; Operational</span></span>
+        <span class="ticker-item"><span class="ticker-name">3PAR EOSL Tracker</span><span class="ticker-status t-crit">&#9660; Down</span></span>
+      </div>
+    </div>
+  </div>
 
   <script>
     // Greeting + live clock. In the Power Apps build these come from

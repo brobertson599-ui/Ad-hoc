@@ -63,10 +63,24 @@ native way to animate — no add-ins needed):
   date/time readout in the header.
 - **Personalised greeting**: "Good morning / afternoon / evening, {first
   name}" from `User().FullName` — it greets whoever opens the app.
+- **Stock-exchange status ticker** (`htmlTicker`): a dark band pinned to
+  the bottom of the screen where every dashboard's name and status scroll
+  continuously, NYSE-style — ▲ green for Operational, ◆ amber for
+  Degraded, ▼ red for Down, ● grey for anything else (HPE dark-theme
+  status tokens on `background.neutral.xstrong`). The ticker's HTML is
+  **generated from the status board's own controls** (`lblStatusName n` /
+  `btnStatusBadge n`), so updating a badge automatically re-words and
+  re-colours the ticker — you never edit it directly. Scroll speed is the
+  `scrollamount` attribute in `htmlTicker.HtmlText` (higher = faster).
+  It scrolls via the HTML `<marquee>` element — long-deprecated but still
+  supported by every browser Power Apps runs in, and the standard
+  community technique for ticker text in canvas apps. If it ever stops
+  scrolling in a future browser, the fallback is a Timer-driven label
+  (same look, slightly choppier motion) — ask and it can be swapped in.
 - **Micro-interactions**: buttons change colour on hover (white →
   HPE primary green) and darken again while pressed; tooltips and
   accessible labels on every link; a visible keyboard-focus ring using
-  HPE's `color.focus`.
+  HPE's `color.focus`; the preview's ticker pauses on hover.
 
 **Tuning:** entrance timing lives in the `With({p: ...})` formulas — the
 first number is the control's start delay (ms), the second is its duration.
