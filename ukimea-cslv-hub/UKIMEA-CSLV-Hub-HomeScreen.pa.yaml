@@ -676,7 +676,7 @@
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
-# ---- Row 4 — UKIMEA Compute Backlog — Degraded (example) -----------------------
+# ---- Row 4 — UKIMEA Compute Backlog — Limited (example) -----------------------
 - crStatusDot4:
     Control: Circle
     Properties:
@@ -718,7 +718,7 @@
 - btnStatusBadge4:
     Control: Classic/Button
     Properties:
-      Text: ="Degraded"
+      Text: ="Limited"
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
@@ -909,7 +909,7 @@
 # the name/badge controls above, so the ticker always matches the status
 # board: symbol and colour come from each badge's Text.
 #   Operational -> ▲ green #05CC93 (dark-theme icon.ok)
-#   Degraded    -> ◆ amber #EC8C25 (dark-theme icon.warning)
+#   Limited    -> ◆ amber #EC8C25 (dark-theme icon.warning)
 #   Down        -> ▼ red   #FC6161 (dark-theme icon.critical)
 #   anything else -> ● grey #7D8A92 (dark-theme icon.unknown)
 - htmlTicker:
@@ -928,10 +928,10 @@
       TabIndex: =-1
       HtmlText: |-
         ="<div style='font-family:Segoe UI,Arial,sans-serif;font-size:15px;line-height:38px;letter-spacing:1px;white-space:nowrap;'><marquee scrollamount='4'>" &
-        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName1.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge1.Text = "Operational", "#05cc93", btnStatusBadge1.Text = "Degraded", "#ec8c25", btnStatusBadge1.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge1.Text = "Operational", "▲", btnStatusBadge1.Text = "Degraded", "◆", btnStatusBadge1.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge1.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
-        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName2.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge2.Text = "Operational", "#05cc93", btnStatusBadge2.Text = "Degraded", "#ec8c25", btnStatusBadge2.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge2.Text = "Operational", "▲", btnStatusBadge2.Text = "Degraded", "◆", btnStatusBadge2.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge2.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
-        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName3.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge3.Text = "Operational", "#05cc93", btnStatusBadge3.Text = "Degraded", "#ec8c25", btnStatusBadge3.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge3.Text = "Operational", "▲", btnStatusBadge3.Text = "Degraded", "◆", btnStatusBadge3.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge3.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
-        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName4.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge4.Text = "Operational", "#05cc93", btnStatusBadge4.Text = "Degraded", "#ec8c25", btnStatusBadge4.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge4.Text = "Operational", "▲", btnStatusBadge4.Text = "Degraded", "◆", btnStatusBadge4.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge4.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
-        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName5.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge5.Text = "Operational", "#05cc93", btnStatusBadge5.Text = "Degraded", "#ec8c25", btnStatusBadge5.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge5.Text = "Operational", "▲", btnStatusBadge5.Text = "Degraded", "◆", btnStatusBadge5.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge5.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
-        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName6.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge6.Text = "Operational", "#05cc93", btnStatusBadge6.Text = "Degraded", "#ec8c25", btnStatusBadge6.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge6.Text = "Operational", "▲", btnStatusBadge6.Text = "Degraded", "◆", btnStatusBadge6.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge6.Text) & "</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName1.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge1.Text = "Operational", "#05cc93", btnStatusBadge1.Text = "Limited", "#ec8c25", btnStatusBadge1.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge1.Text = "Operational", "▲", btnStatusBadge1.Text = "Limited", "◆", btnStatusBadge1.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge1.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName2.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge2.Text = "Operational", "#05cc93", btnStatusBadge2.Text = "Limited", "#ec8c25", btnStatusBadge2.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge2.Text = "Operational", "▲", btnStatusBadge2.Text = "Limited", "◆", btnStatusBadge2.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge2.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName3.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge3.Text = "Operational", "#05cc93", btnStatusBadge3.Text = "Limited", "#ec8c25", btnStatusBadge3.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge3.Text = "Operational", "▲", btnStatusBadge3.Text = "Limited", "◆", btnStatusBadge3.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge3.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName4.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge4.Text = "Operational", "#05cc93", btnStatusBadge4.Text = "Limited", "#ec8c25", btnStatusBadge4.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge4.Text = "Operational", "▲", btnStatusBadge4.Text = "Limited", "◆", btnStatusBadge4.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge4.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName5.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge5.Text = "Operational", "#05cc93", btnStatusBadge5.Text = "Limited", "#ec8c25", btnStatusBadge5.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge5.Text = "Operational", "▲", btnStatusBadge5.Text = "Limited", "◆", btnStatusBadge5.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge5.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
+        "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName6.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge6.Text = "Operational", "#05cc93", btnStatusBadge6.Text = "Limited", "#ec8c25", btnStatusBadge6.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge6.Text = "Operational", "▲", btnStatusBadge6.Text = "Limited", "◆", btnStatusBadge6.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge6.Text) & "</span>" &
         "</marquee></div>"

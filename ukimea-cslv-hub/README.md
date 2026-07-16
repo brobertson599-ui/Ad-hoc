@@ -66,7 +66,7 @@ native way to animate — no add-ins needed):
 - **Stock-exchange status ticker** (`htmlTicker`): a dark band pinned to
   the bottom of the screen where every dashboard's name and status scroll
   continuously, NYSE-style — ▲ green for Operational, ◆ amber for
-  Degraded, ▼ red for Down, ● grey for anything else (HPE dark-theme
+  Limited, ▼ red for Down, ● grey for anything else (HPE dark-theme
   status tokens on `background.neutral.xstrong`). The ticker's HTML is
   **generated from the status board's own controls** (`lblStatusName n` /
   `btnStatusBadge n`), so updating a badge automatically re-words and
@@ -102,7 +102,7 @@ To change a dashboard's status, set these three things on its row
 | Status | Dot colour (icon token) | Badge `Fill` (background token) | Badge `Text` |
 |---|---|---|---|
 | Working normally | `RGBA(0, 154, 113, …)` — icon.ok `#009A71` | `RGBA(209, 255, 238, …)` — background.ok `#D1FFEE` | `Operational` |
-| Working but impaired | `RGBA(211, 109, 0, …)` — icon.warning `#D36D00` | `RGBA(255, 243, 221, …)` — background.warning `#FFF3DD` | `Degraded` |
+| Working but impaired | `RGBA(211, 109, 0, …)` — icon.warning `#D36D00` | `RGBA(255, 243, 221, …)` — background.warning `#FFF3DD` | `Limited` |
 | Not working | `RGBA(204, 31, 26, …)` — icon.critical `#CC1F1A` | `RGBA(255, 236, 236, …)` — background.critical `#FFECEC` | `Down` |
 | Unknown | `RGBA(96, 106, 112, …)` — icon.unknown `#606A70` | `RGBA(0, 0, 0, 10)` — background.unknown | `Unknown` |
 
