@@ -9,10 +9,10 @@
   :root {
     --background-back: #f7f7f7;        /* page background, elevation 0 */
     --background-front: #ffffff;       /* card surface, elevation 1 */
-    --brand: #01a982;                  /* HPE brand, green-600 */
-    --primary-strong: #068667;         /* background-primary-strong, green-700 */
-    --primary-strong-hover: #006750;   /* green-800 */
-    --text-strong: #292d3a;            /* headings */
+    --brand: #01a982;                  /* HPE brand, decorative.brand */
+    --primary-strong: #068667;         /* background-primary-strong */
+    --primary-strong-hover: #006750;   /* background-primary-strong-hover */
+    --text-strong: #292d3a;
     --text-default: #3e4550;
     --text-weak: #606a70;
     --border-weak: #d4d8db;
@@ -43,24 +43,57 @@
     flex-direction: column;
   }
 
+  /* ---- Entrance animations (mirrors the Power Apps timer cascade) ---- */
+  @keyframes sweepIn   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes riseIn    { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn    { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes breathe   { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+  .anim-sweep { transform-origin: left center; animation: sweepIn 500ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .anim-rise  { animation: riseIn 450ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .anim-fade  { animation: fadeIn 400ms ease-out both; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .anim-sweep, .anim-rise, .anim-fade { animation: none; }
+    .dot { animation: none !important; }
+    a.dash-btn { transition: none; }
+  }
+
   /* ---- Header ---- */
   .brand-stripe { height: 6px; background: var(--brand); }
 
   header.app-header {
     background: var(--background-front);
     border-bottom: 1px solid var(--separator);
-    padding: 20px 48px 22px;
+    padding: 18px 48px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    flex-wrap: wrap;
   }
   header.app-header h1 {
     color: var(--text-strong);
-    font-size: 2rem;
+    font-size: 1.9rem;
     font-weight: 700;
     letter-spacing: 0.01em;
   }
-  header.app-header p {
+  header.app-header .tagline {
     color: var(--text-weak);
     font-size: 0.95rem;
     margin-top: 4px;
+  }
+  .header-meta { text-align: right; }
+  .header-meta .greeting {
+    color: var(--text-strong);
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+  .header-meta .clock {
+    color: var(--text-weak);
+    font-size: 0.85rem;
+    margin-top: 4px;
+    font-variant-numeric: tabular-nums;
   }
 
   main {
@@ -68,34 +101,34 @@
     width: 100%;
     max-width: 1366px;
     margin: 0 auto;
-    padding: 24px 48px 16px;
+    padding: 20px 48px 12px;
   }
 
   h2.section-title {
     color: var(--text-strong);
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 600;
-    margin: 6px 0 14px;
+    margin: 4px 0 14px;
   }
 
-  /* ---- Dashboard link buttons ---- */
+  /* ---- Dashboard link buttons (2 rows x 3) ---- */
   .dash-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px 24px;
   }
   a.dash-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 120px;
-    padding: 16px;
+    min-height: 78px;
+    padding: 14px 16px;
     background: var(--background-front);
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-medium);
     box-shadow: var(--shadow-small);
     color: var(--text-strong);
-    font-size: 1.1rem;
+    font-size: 1.02rem;
     font-weight: 600;
     text-decoration: none;
     text-align: center;
@@ -123,24 +156,24 @@
 
   /* ---- Status board ---- */
   section.status-card {
-    margin-top: 32px;
+    margin-top: 28px;
     background: var(--background-front);
     border: 1px solid var(--border-weak);
     border-radius: var(--radius-medium);
     box-shadow: var(--shadow-small);
-    padding: 24px 32px 8px;
+    padding: 20px 32px 4px;
   }
   .status-head {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     gap: 16px;
-    padding-bottom: 16px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--separator);
   }
   .status-head h2 {
     color: var(--text-strong);
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 600;
   }
   .status-head .updated {
@@ -152,10 +185,10 @@
   ul.status-list { list-style: none; }
   ul.status-list li {
     display: grid;
-    grid-template-columns: 14px 260px 1fr 150px;
+    grid-template-columns: 14px 300px 1fr 150px;
     align-items: center;
     gap: 16px;
-    padding: 18px 8px;
+    padding: 14px 8px;
     border-bottom: 1px solid var(--separator);
   }
   ul.status-list li:last-child { border-bottom: none; }
@@ -165,6 +198,7 @@
     height: 14px;
     border-radius: 50%;
     flex: none;
+    animation: breathe 4s ease-in-out infinite;
   }
   .dot.ok       { background: var(--icon-ok); }
   .dot.warning  { background: var(--icon-warning); }
@@ -174,19 +208,19 @@
   .status-name {
     color: var(--text-strong);
     font-weight: 600;
-    font-size: 0.98rem;
+    font-size: 0.95rem;
   }
   .status-desc {
     color: var(--text-weak);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
 
   .badge {
     justify-self: end;
     display: inline-block;
-    padding: 5px 18px;
+    padding: 4px 18px;
     border-radius: var(--radius-full);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: var(--text-default);
     white-space: nowrap;
@@ -201,14 +235,16 @@
     max-width: 1366px;
     width: 100%;
     margin: 0 auto;
-    padding: 12px 48px 24px;
+    padding: 10px 48px 20px;
     text-align: right;
     color: var(--text-weak);
     font-size: 0.85rem;
   }
 
-  @media (max-width: 820px) {
+  @media (max-width: 900px) {
     header.app-header, main, footer.credit { padding-left: 20px; padding-right: 20px; }
+    .header-meta { text-align: left; }
+    .dash-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
     ul.status-list li {
       grid-template-columns: 14px 1fr auto;
       grid-template-rows: auto auto;
@@ -218,50 +254,70 @@
 </style>
 </head>
 <body>
-  <div class="brand-stripe"></div>
+  <div class="brand-stripe anim-sweep"></div>
 
   <header class="app-header">
-    <h1>UKIMEA CSLV HUB</h1>
-    <p>Central access to UKIMEA CSLV reporting dashboards</p>
+    <div class="anim-rise">
+      <h1>UKIMEA CSLV HUB</h1>
+      <p class="tagline">Central access to UKIMEA CSLV reporting dashboards</p>
+    </div>
+    <div class="header-meta anim-fade" style="animation-delay:150ms">
+      <div class="greeting" id="greeting">Welcome</div>
+      <div class="clock" id="clock"></div>
+    </div>
   </header>
 
   <main>
-    <h2 class="section-title">Dashboards</h2>
+    <h2 class="section-title anim-fade" style="animation-delay:200ms">Dashboards</h2>
     <nav class="dash-grid" aria-label="Dashboard links">
       <!-- Replace href placeholders with the real dashboard URLs -->
-      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_1_URL">Dashboard 1</a>
-      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_2_URL">Dashboard 2</a>
-      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_3_URL">Dashboard 3</a>
-      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_4_URL">Dashboard 4</a>
+      <a class="dash-btn anim-rise" style="animation-delay:250ms" href="REPLACE_WITH_1_PERCENT_CLUB_URL">1% Club</a>
+      <a class="dash-btn anim-rise" style="animation-delay:330ms" href="REPLACE_WITH_ATTACH_WIZARD_URL">Attach Wizard [Beta]</a>
+      <a class="dash-btn anim-rise" style="animation-delay:410ms" href="REPLACE_WITH_SFDC_HYGIENE_URL">SFDC Hygiene</a>
+      <a class="dash-btn anim-rise" style="animation-delay:490ms" href="REPLACE_WITH_COMPUTE_BACKLOG_URL">UKIMEA Compute Backlog</a>
+      <a class="dash-btn anim-rise" style="animation-delay:570ms" href="REPLACE_WITH_OS_CHANNEL_ACTUALS_URL">UKIMEA OS Channel Actuals</a>
+      <a class="dash-btn anim-rise" style="animation-delay:650ms" href="REPLACE_WITH_3PAR_EOSL_URL">3PAR EOSL Tracker</a>
     </nav>
 
-    <section class="status-card" aria-label="Dashboard status">
+    <section class="status-card anim-fade" style="animation-delay:720ms" aria-label="Dashboard status">
       <div class="status-head">
         <h2>Dashboard status</h2>
         <span class="updated">Last updated: 16 Jul 2026, 09:00</span>
       </div>
       <ul class="status-list">
-        <li>
+        <li class="anim-fade" style="animation-delay:800ms">
           <span class="dot ok" aria-hidden="true"></span>
-          <span class="status-name">Dashboard 1</span>
+          <span class="status-name">1% Club</span>
           <span class="status-desc">All data sources connected – refreshing normally.</span>
           <span class="badge ok">Operational</span>
         </li>
-        <li>
+        <li class="anim-fade" style="animation-delay:860ms">
           <span class="dot ok" aria-hidden="true"></span>
-          <span class="status-name">Dashboard 2</span>
+          <span class="status-name">Attach Wizard [Beta]</span>
+          <span class="status-desc">Live – beta build, refreshing normally.</span>
+          <span class="badge ok">Operational</span>
+        </li>
+        <li class="anim-fade" style="animation-delay:920ms">
+          <span class="dot ok" aria-hidden="true"></span>
+          <span class="status-name">SFDC Hygiene</span>
           <span class="status-desc">Live – last refresh completed successfully.</span>
           <span class="badge ok">Operational</span>
         </li>
-        <li>
+        <li class="anim-fade" style="animation-delay:980ms">
           <span class="dot warning" aria-hidden="true"></span>
-          <span class="status-name">Dashboard 3</span>
+          <span class="status-name">UKIMEA Compute Backlog</span>
           <span class="status-desc">Slow refresh – [brief reason, e.g. upstream source latency].</span>
           <span class="badge warning">Degraded</span>
         </li>
-        <li>
+        <li class="anim-fade" style="animation-delay:1040ms">
+          <span class="dot ok" aria-hidden="true"></span>
+          <span class="status-name">UKIMEA OS Channel Actuals</span>
+          <span class="status-desc">All data sources connected – refreshing normally.</span>
+          <span class="badge ok">Operational</span>
+        </li>
+        <li class="anim-fade" style="animation-delay:1100ms">
           <span class="dot critical" aria-hidden="true"></span>
-          <span class="status-name">Dashboard 4</span>
+          <span class="status-name">3PAR EOSL Tracker</span>
           <span class="status-desc">Unavailable – [brief reason, e.g. data gateway offline].</span>
           <span class="badge critical">Down</span>
         </li>
@@ -269,8 +325,26 @@
     </section>
   </main>
 
-  <footer class="credit">
+  <footer class="credit anim-fade" style="animation-delay:1150ms">
     Dashboard architects: Ben Robertson &middot; Alex Cohen
   </footer>
+
+  <script>
+    // Greeting + live clock. In the Power Apps build these come from
+    // User().FullName and the tmrClock timer; here the greeting has no
+    // signed-in user, so it shows the time-of-day part only.
+    function tick() {
+      var now = new Date();
+      var h = now.getHours();
+      var part = h < 12 ? "morning" : h < 17 ? "afternoon" : "evening";
+      document.getElementById("greeting").textContent = "Good " + part;
+      document.getElementById("clock").textContent =
+        now.toLocaleDateString("en-GB", { weekday: "short", day: "2-digit", month: "short", year: "numeric" }) +
+        "   " +
+        now.toLocaleTimeString("en-GB", { hour12: false });
+    }
+    tick();
+    setInterval(tick, 1000);
+  </script>
 </body>
 </html>

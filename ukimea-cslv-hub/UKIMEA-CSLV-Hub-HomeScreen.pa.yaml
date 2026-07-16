@@ -7,27 +7,67 @@
 #   3. Copy the ENTIRE contents of this file.
 #   4. Click on the empty canvas and paste (Ctrl+V). Power Apps Studio
 #      accepts YAML on the clipboard and recreates every control below.
-#   5. Replace the four REPLACE_WITH_DASHBOARD_*_URL placeholders in the
-#      OnSelect of btnDash1–btnDash4 with your real dashboard links.
+#   5. Replace the six REPLACE_WITH_*_URL placeholders in the OnSelect of
+#      btnDash1–btnDash6 with your real dashboard links.
 #   6. Update the status rows (badge Text/Fill, dot Fill, descriptions)
-#      whenever a dashboard's health changes — the colour pairs to use are
-#      listed next to each badge.
+#      whenever a dashboard's health changes — colour pairs are listed
+#      next to the first badge.
+#
+# ANIMATIONS (all driven by the three invisible Timer controls below)
+#   tmrEntrance — one-shot cascade on screen load: brand stripe sweeps in,
+#                 header fades, buttons slide up one after another, then
+#                 the status board and its rows fade in. Total ~1.5 s.
+#   tmrIdle     — 4 s repeating loop: status dots gently "breathe" so the
+#                 board reads as live.
+#   tmrClock    — 1 s tick: updates the live clock and greeting.
+#   To slow/speed the entrance, change tmrEntrance.Duration and the delay
+#   numbers inside the With({p: ...}) formulas (they are milliseconds).
+#   To remove all motion, delete the three timers and replace every
+#   With({p: ...}, ...) formula with its resting value.
 #
 # COLOURS — HPE Design System, light theme (design-tokens v2.2.3)
 #   page background   #F7F7F7  (background-back)
 #   card surface      #FFFFFF  (background-front)
-#   brand accent      #01A982  (HPE brand green-600)
-#   heading text      #292D3A  (text-strong)
+#   brand accent      #01A982  (decorative.brand)
+#   heading text      #292D3A  (text-strong / text-heading)
 #   body text         #3E4550  (text-default)
 #   supporting text   #606A70  (text-weak)
 #   card border       #D4D8DB  (border-weak)
-#   button hover      #068667  (background-primary-strong, green-700)
-#   button pressed    #006750  (green-800)
-#   status OK         dot #009A71 (icon-ok)       badge #D1FFEE (background-ok)
-#   status warning    dot #D36D00 (icon-warning)  badge #FFF3DD (background-warning)
-#   status critical   dot #CC1F1A (icon-critical) badge #FFECEC (background-critical)
-#   status unknown    dot #606A70 (icon-unknown)  badge RGBA(0,0,0,10) (background-unknown)
+#   button hover      #068667  (background-primary-strong)
+#   button pressed    #006750  (background-primary-strong-hover)
+#   focus ring        #292D3A  (color.focus)
+#   status OK         dot #009A71 (icon.ok)       badge #D1FFEE (background.ok)
+#   status warning    dot #D36D00 (icon.warning)  badge #FFF3DD (background.warning)
+#   status critical   dot #CC1F1A (icon.critical) badge #FFECEC (background.critical)
+#   status unknown    dot #606A70 (icon.unknown)  badge RGBA(0,0,0,10) (background.unknown)
 # ============================================================================
+
+# ---- Animation engine: three invisible timers --------------------------------
+- tmrEntrance:
+    Control: Timer
+    Properties:
+      Duration: =1500
+      AutoStart: =true
+      Repeat: =false
+      Visible: =false
+      OnTimerEnd: =Set(varLoaded, true)
+
+- tmrIdle:
+    Control: Timer
+    Properties:
+      Duration: =4000
+      AutoStart: =true
+      Repeat: =true
+      Visible: =false
+
+- tmrClock:
+    Control: Timer
+    Properties:
+      Duration: =1000
+      AutoStart: =true
+      Repeat: =true
+      Visible: =false
+      OnTimerEnd: =Set(varNow, Now())
 
 # ---- Page background (elevation 0) -----------------------------------------
 - recPageBackground:
@@ -48,17 +88,18 @@
       X: =0
       Y: =0
       Width: =Parent.Width
-      Height: =112
+      Height: =104
       Fill: =ColorValue("#FFFFFF")
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
+# Brand stripe sweeps across the top on load (width grows 0 -> full).
 - recBrandStripe:
     Control: Rectangle
     Properties:
       X: =0
       Y: =0
-      Width: =Parent.Width
+      Width: =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 500)))}, Parent.Width * (1 - Power(1 - p, 3)))
       Height: =6
       Fill: =ColorValue("#01A982")
       BorderStyle: =BorderStyle.None
@@ -68,37 +109,68 @@
     Control: Rectangle
     Properties:
       X: =0
-      Y: =111
+      Y: =103
       Width: =Parent.Width
       Height: =1
       Fill: =ColorValue("#E6E8E9")
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
+# Title fades in and rises 12px.
 - lblAppTitle:
     Control: Label
     Properties:
       Text: ="UKIMEA CSLV HUB"
       X: =48
-      Y: =24
-      Width: =800
-      Height: =46
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 400)))}, 22 + 12 * Power(1 - p, 3))
+      Width: =700
+      Height: =40
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Bold
-      Size: =26
-      Color: =ColorValue("#292D3A")
+      Size: =24
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, tmrEntrance.Value / 400)))}, RGBA(41, 45, 58, p))
 
 - lblAppSubtitle:
     Control: Label
     Properties:
       Text: ="Central access to UKIMEA CSLV reporting dashboards"
       X: =48
-      Y: =72
-      Width: =800
-      Height: =26
+      Y: =64
+      Width: =700
+      Height: =24
       Font: =Font.'Open Sans'
       Size: =12
-      Color: =ColorValue("#606A70")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 120) / 400)))}, RGBA(96, 106, 112, p))
+
+# Personalised greeting — uses the signed-in user's first name.
+- lblGreeting:
+    Control: Label
+    Properties:
+      Text: |-
+        ="Good " & If(Hour(If(IsBlank(varNow), Now(), varNow)) < 12, "morning", Hour(If(IsBlank(varNow), Now(), varNow)) < 17, "afternoon", "evening") & If(IsBlank(User().FullName), "", ", " & First(Split(User().FullName, " ")).Value)
+      X: =766
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, 26 + 10 * Power(1 - p, 3))
+      Width: =552
+      Height: =26
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, RGBA(41, 45, 58, p))
+
+# Live clock — ticks every second via tmrClock.
+- lblClock:
+    Control: Label
+    Properties:
+      Text: =With({t: If(IsBlank(varNow), Now(), varNow)}, Text(t, "ddd dd mmm yyyy") & "   " & Text(t, "HH:mm:ss"))
+      X: =766
+      Y: =56
+      Width: =552
+      Height: =22
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      Size: =11
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, RGBA(96, 106, 112, p))
 
 # ---- Dashboard links ---------------------------------------------------------
 - lblSectionDashboards:
@@ -106,28 +178,30 @@
     Properties:
       Text: ="Dashboards"
       X: =48
-      Y: =138
+      Y: =116
       Width: =400
-      Height: =26
+      Height: =22
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
-      Size: =15
-      Color: =ColorValue("#292D3A")
+      Size: =14
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 200) / 400)))}, RGBA(41, 45, 58, p))
 
+# Six buttons, 2 rows x 3. Each slides up 20px and fades in, staggered
+# left-to-right, top-to-bottom (delays 250/330/410/490/570/650 ms).
 - btnDash1:
     Control: Classic/Button
     Properties:
-      Text: ="Dashboard 1"
-      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_1_URL")
-      Tooltip: ="Open Dashboard 1"
-      AccessibleLabel: ="Open Dashboard 1"
+      Text: ="1% Club"
+      OnSelect: =Launch("REPLACE_WITH_1_PERCENT_CLUB_URL")
+      Tooltip: ="Open 1% Club"
+      AccessibleLabel: ="Open 1% Club"
       X: =48
-      Y: =176
-      Width: =298
-      Height: =120
-      Fill: =ColorValue("#FFFFFF")
-      Color: =ColorValue("#292D3A")
-      BorderColor: =ColorValue("#D4D8DB")
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, 146 + 20 * Power(1 - p, 3))
+      Width: =407
+      Height: =78
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(255, 255, 255, p))
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -144,22 +218,22 @@
       RadiusBottomRight: =12
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
-      Size: =16
+      Size: =14
 
 - btnDash2:
     Control: Classic/Button
     Properties:
-      Text: ="Dashboard 2"
-      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_2_URL")
-      Tooltip: ="Open Dashboard 2"
-      AccessibleLabel: ="Open Dashboard 2"
-      X: =370
-      Y: =176
-      Width: =298
-      Height: =120
-      Fill: =ColorValue("#FFFFFF")
-      Color: =ColorValue("#292D3A")
-      BorderColor: =ColorValue("#D4D8DB")
+      Text: ="Attach Wizard [Beta]"
+      OnSelect: =Launch("REPLACE_WITH_ATTACH_WIZARD_URL")
+      Tooltip: ="Open Attach Wizard [Beta]"
+      AccessibleLabel: ="Open Attach Wizard [Beta]"
+      X: =479
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, 146 + 20 * Power(1 - p, 3))
+      Width: =407
+      Height: =78
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(255, 255, 255, p))
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -176,22 +250,22 @@
       RadiusBottomRight: =12
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
-      Size: =16
+      Size: =14
 
 - btnDash3:
     Control: Classic/Button
     Properties:
-      Text: ="Dashboard 3"
-      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_3_URL")
-      Tooltip: ="Open Dashboard 3"
-      AccessibleLabel: ="Open Dashboard 3"
-      X: =692
-      Y: =176
-      Width: =298
-      Height: =120
-      Fill: =ColorValue("#FFFFFF")
-      Color: =ColorValue("#292D3A")
-      BorderColor: =ColorValue("#D4D8DB")
+      Text: ="SFDC Hygiene"
+      OnSelect: =Launch("REPLACE_WITH_SFDC_HYGIENE_URL")
+      Tooltip: ="Open SFDC Hygiene"
+      AccessibleLabel: ="Open SFDC Hygiene"
+      X: =910
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, 146 + 20 * Power(1 - p, 3))
+      Width: =407
+      Height: =78
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(255, 255, 255, p))
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -208,22 +282,22 @@
       RadiusBottomRight: =12
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
-      Size: =16
+      Size: =14
 
 - btnDash4:
     Control: Classic/Button
     Properties:
-      Text: ="Dashboard 4"
-      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_4_URL")
-      Tooltip: ="Open Dashboard 4"
-      AccessibleLabel: ="Open Dashboard 4"
-      X: =1014
-      Y: =176
-      Width: =298
-      Height: =120
-      Fill: =ColorValue("#FFFFFF")
-      Color: =ColorValue("#292D3A")
-      BorderColor: =ColorValue("#D4D8DB")
+      Text: ="UKIMEA Compute Backlog"
+      OnSelect: =Launch("REPLACE_WITH_COMPUTE_BACKLOG_URL")
+      Tooltip: ="Open UKIMEA Compute Backlog"
+      AccessibleLabel: ="Open UKIMEA Compute Backlog"
+      X: =48
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, 236 + 20 * Power(1 - p, 3))
+      Width: =407
+      Height: =78
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(255, 255, 255, p))
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       HoverFill: =ColorValue("#068667")
@@ -240,11 +314,75 @@
       RadiusBottomRight: =12
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
-      Size: =16
+      Size: =14
+
+- btnDash5:
+    Control: Classic/Button
+    Properties:
+      Text: ="UKIMEA OS Channel Actuals"
+      OnSelect: =Launch("REPLACE_WITH_OS_CHANNEL_ACTUALS_URL")
+      Tooltip: ="Open UKIMEA OS Channel Actuals"
+      AccessibleLabel: ="Open UKIMEA OS Channel Actuals"
+      X: =479
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, 236 + 20 * Power(1 - p, 3))
+      Width: =407
+      Height: =78
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(255, 255, 255, p))
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, RGBA(212, 216, 219, p))
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
+
+- btnDash6:
+    Control: Classic/Button
+    Properties:
+      Text: ="3PAR EOSL Tracker"
+      OnSelect: =Launch("REPLACE_WITH_3PAR_EOSL_URL")
+      Tooltip: ="Open 3PAR EOSL Tracker"
+      AccessibleLabel: ="Open 3PAR EOSL Tracker"
+      X: =910
+      Y: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, 236 + 20 * Power(1 - p, 3))
+      Width: =407
+      Height: =78
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(255, 255, 255, p))
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(41, 45, 58, p))
+      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, RGBA(212, 216, 219, p))
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =14
 
 # ---- Status board -------------------------------------------------------------
 # Rounded card surface (a view-only button is used so the card gets HPE's
-# 12px radius, which plain rectangles don't support).
+# 12px radius, which plain rectangles don't support). Fades in after buttons.
 - btnStatusCardBg:
     Control: Classic/Button
     Properties:
@@ -252,13 +390,13 @@
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =48
-      Y: =328
+      Y: =330
       Width: =1270
-      Height: =352
-      Fill: =ColorValue("#FFFFFF")
+      Height: =378
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(255, 255, 255, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      BorderColor: =ColorValue("#D4D8DB")
+      BorderColor: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(212, 216, 219, p))
       BorderThickness: =1
       BorderStyle: =BorderStyle.Solid
       RadiusTopLeft: =12
@@ -271,78 +409,80 @@
     Properties:
       Text: ="Dashboard status"
       X: =80
-      Y: =352
+      Y: =346
       Width: =400
-      Height: =28
+      Height: =26
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
-      Size: =16
-      Color: =ColorValue("#292D3A")
+      Size: =15
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(41, 45, 58, p))
 
 - lblStatusUpdated:
     Control: Label
     Properties:
       Text: ="Last updated: 16 Jul 2026, 09:00"
       X: =806
-      Y: =356
+      Y: =350
       Width: =480
-      Height: =22
+      Height: =20
       Align: =Align.Right
       Font: =Font.'Open Sans'
       Size: =11
-      Color: =ColorValue("#606A70")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(96, 106, 112, p))
 
 - recStatusRule0:
     Control: Rectangle
     Properties:
       X: =80
-      Y: =394
+      Y: =382
       Width: =1206
       Height: =1
-      Fill: =ColorValue("#E6E8E9")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
-# ---- Row 1 — Operational -------------------------------------------------------
+# ---- Row 1 — 1% Club — Operational ---------------------------------------------
+# Dots "breathe" via tmrIdle (alpha oscillates). Rows fade in staggered
+# (delays 800/860/920/980/1040/1100 ms).
 - crStatusDot1:
     Control: Circle
     Properties:
       X: =88
-      Y: =426
+      Y: =405
       Width: =14
       Height: =14
-      Fill: =ColorValue("#009A71")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
 - lblStatusName1:
     Control: Label
     Properties:
-      Text: ="Dashboard 1"
+      Text: ="1% Club"
       X: =118
-      Y: =400
-      Width: =290
-      Height: =65
+      Y: =386
+      Width: =310
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =ColorValue("#292D3A")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc1:
     Control: Label
     Properties:
       Text: ="All data sources connected – refreshing normally."
-      X: =420
-      Y: =400
-      Width: =690
-      Height: =65
+      X: =440
+      Y: =386
+      Width: =650
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
-      Size: =12
-      Color: =ColorValue("#606A70")
+      Size: =11.5
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(96, 106, 112, p))
 
-# Badge colours — OK: Fill #D1FFEE · Warning: Fill #FFF3DD · Down: Fill #FFECEC
+# Badge colours — OK: #D1FFEE · Warning: #FFF3DD · Down: #FFECEC · Unknown: RGBA(0,0,0,10)
 - btnStatusBadge1:
     Control: Classic/Button
     Properties:
@@ -350,20 +490,20 @@
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
-      Y: =418
+      Y: =398
       Width: =150
-      Height: =30
-      Fill: =ColorValue("#D1FFEE")
+      Height: =28
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(209, 255, 238, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =ColorValue("#3E4550")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 800) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
-      RadiusTopLeft: =15
-      RadiusTopRight: =15
-      RadiusBottomLeft: =15
-      RadiusBottomRight: =15
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =11
@@ -372,51 +512,51 @@
     Control: Rectangle
     Properties:
       X: =80
-      Y: =465
+      Y: =437
       Width: =1206
       Height: =1
-      Fill: =ColorValue("#E6E8E9")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
-# ---- Row 2 — Operational -------------------------------------------------------
+# ---- Row 2 — Attach Wizard [Beta] — Operational --------------------------------
 - crStatusDot2:
     Control: Circle
     Properties:
       X: =88
-      Y: =492
+      Y: =457
       Width: =14
       Height: =14
-      Fill: =ColorValue("#009A71")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
 - lblStatusName2:
     Control: Label
     Properties:
-      Text: ="Dashboard 2"
+      Text: ="Attach Wizard [Beta]"
       X: =118
-      Y: =466
-      Width: =290
-      Height: =65
+      Y: =438
+      Width: =310
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =ColorValue("#292D3A")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc2:
     Control: Label
     Properties:
-      Text: ="Live – last refresh completed successfully."
-      X: =420
-      Y: =466
-      Width: =690
-      Height: =65
+      Text: ="Live – beta build, refreshing normally."
+      X: =440
+      Y: =438
+      Width: =650
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
-      Size: =12
-      Color: =ColorValue("#606A70")
+      Size: =11.5
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge2:
     Control: Classic/Button
@@ -425,20 +565,20 @@
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
-      Y: =484
+      Y: =450
       Width: =150
-      Height: =30
-      Fill: =ColorValue("#D1FFEE")
+      Height: =28
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(209, 255, 238, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =ColorValue("#3E4550")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 860) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
-      RadiusTopLeft: =15
-      RadiusTopRight: =15
-      RadiusBottomLeft: =15
-      RadiusBottomRight: =15
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =11
@@ -447,73 +587,73 @@
     Control: Rectangle
     Properties:
       X: =80
-      Y: =531
+      Y: =489
       Width: =1206
       Height: =1
-      Fill: =ColorValue("#E6E8E9")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
-# ---- Row 3 — Degraded (example) ------------------------------------------------
+# ---- Row 3 — SFDC Hygiene — Operational ----------------------------------------
 - crStatusDot3:
     Control: Circle
     Properties:
       X: =88
-      Y: =558
+      Y: =509
       Width: =14
       Height: =14
-      Fill: =ColorValue("#D36D00")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
 - lblStatusName3:
     Control: Label
     Properties:
-      Text: ="Dashboard 3"
+      Text: ="SFDC Hygiene"
       X: =118
-      Y: =532
-      Width: =290
-      Height: =65
+      Y: =490
+      Width: =310
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =ColorValue("#292D3A")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc3:
     Control: Label
     Properties:
-      Text: ="Slow refresh – [brief reason, e.g. upstream source latency]."
-      X: =420
-      Y: =532
-      Width: =690
-      Height: =65
+      Text: ="Live – last refresh completed successfully."
+      X: =440
+      Y: =490
+      Width: =650
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
-      Size: =12
-      Color: =ColorValue("#606A70")
+      Size: =11.5
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge3:
     Control: Classic/Button
     Properties:
-      Text: ="Degraded"
+      Text: ="Operational"
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
-      Y: =550
+      Y: =502
       Width: =150
-      Height: =30
-      Fill: =ColorValue("#FFF3DD")
+      Height: =28
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(209, 255, 238, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =ColorValue("#3E4550")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 920) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
-      RadiusTopLeft: =15
-      RadiusTopRight: =15
-      RadiusBottomLeft: =15
-      RadiusBottomRight: =15
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =11
@@ -522,73 +662,223 @@
     Control: Rectangle
     Properties:
       X: =80
-      Y: =597
+      Y: =541
       Width: =1206
       Height: =1
-      Fill: =ColorValue("#E6E8E9")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
-# ---- Row 4 — Down (example) ----------------------------------------------------
+# ---- Row 4 — UKIMEA Compute Backlog — Degraded (example) -----------------------
 - crStatusDot4:
     Control: Circle
     Properties:
       X: =88
-      Y: =624
+      Y: =561
       Width: =14
       Height: =14
-      Fill: =ColorValue("#CC1F1A")
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(211, 109, 0, p * (0.55 + 0.45 * ph)))
       BorderStyle: =BorderStyle.None
       TabIndex: =-1
 
 - lblStatusName4:
     Control: Label
     Properties:
-      Text: ="Dashboard 4"
+      Text: ="UKIMEA Compute Backlog"
       X: =118
-      Y: =598
-      Width: =290
-      Height: =65
+      Y: =542
+      Width: =310
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =13
-      Color: =ColorValue("#292D3A")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(41, 45, 58, p))
 
 - lblStatusDesc4:
     Control: Label
     Properties:
-      Text: ="Unavailable – [brief reason, e.g. data gateway offline]."
-      X: =420
-      Y: =598
-      Width: =690
-      Height: =65
+      Text: ="Slow refresh – [brief reason, e.g. upstream source latency]."
+      X: =440
+      Y: =542
+      Width: =650
+      Height: =52
       VerticalAlign: =VerticalAlign.Middle
       Font: =Font.'Open Sans'
-      Size: =12
-      Color: =ColorValue("#606A70")
+      Size: =11.5
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(96, 106, 112, p))
 
 - btnStatusBadge4:
+    Control: Classic/Button
+    Properties:
+      Text: ="Degraded"
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =554
+      Width: =150
+      Height: =28
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(255, 243, 221, p))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 980) / 350)))}, RGBA(62, 69, 80, p))
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- recStatusRule4:
+    Control: Rectangle
+    Properties:
+      X: =80
+      Y: =593
+      Width: =1206
+      Height: =1
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Row 5 — UKIMEA OS Channel Actuals — Operational ---------------------------
+- crStatusDot5:
+    Control: Circle
+    Properties:
+      X: =88
+      Y: =613
+      Width: =14
+      Height: =14
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(0, 154, 113, p * (0.55 + 0.45 * ph)))
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- lblStatusName5:
+    Control: Label
+    Properties:
+      Text: ="UKIMEA OS Channel Actuals"
+      X: =118
+      Y: =594
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(41, 45, 58, p))
+
+- lblStatusDesc5:
+    Control: Label
+    Properties:
+      Text: ="All data sources connected – refreshing normally."
+      X: =440
+      Y: =594
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(96, 106, 112, p))
+
+- btnStatusBadge5:
+    Control: Classic/Button
+    Properties:
+      Text: ="Operational"
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =606
+      Width: =150
+      Height: =28
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(209, 255, 238, p))
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1040) / 350)))}, RGBA(62, 69, 80, p))
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- recStatusRule5:
+    Control: Rectangle
+    Properties:
+      X: =80
+      Y: =645
+      Width: =1206
+      Height: =1
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 720) / 400)))}, RGBA(230, 232, 233, p))
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Row 6 — 3PAR EOSL Tracker — Down (example) --------------------------------
+- crStatusDot6:
+    Control: Circle
+    Properties:
+      X: =88
+      Y: =665
+      Width: =14
+      Height: =14
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350))), ph: 0.5 + 0.5 * Sin(2 * Pi() * tmrIdle.Value / tmrIdle.Duration)}, RGBA(204, 31, 26, p * (0.55 + 0.45 * ph)))
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- lblStatusName6:
+    Control: Label
+    Properties:
+      Text: ="3PAR EOSL Tracker"
+      X: =118
+      Y: =646
+      Width: =310
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(41, 45, 58, p))
+
+- lblStatusDesc6:
+    Control: Label
+    Properties:
+      Text: ="Unavailable – [brief reason, e.g. data gateway offline]."
+      X: =440
+      Y: =646
+      Width: =650
+      Height: =52
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =11.5
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(96, 106, 112, p))
+
+- btnStatusBadge6:
     Control: Classic/Button
     Properties:
       Text: ="Down"
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
-      Y: =616
+      Y: =658
       Width: =150
-      Height: =30
-      Fill: =ColorValue("#FFECEC")
+      Height: =28
+      Fill: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(255, 236, 236, p))
       HoverFill: =Self.Fill
       PressedFill: =Self.Fill
-      Color: =ColorValue("#3E4550")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1100) / 350)))}, RGBA(62, 69, 80, p))
       HoverColor: =Self.Color
       PressedColor: =Self.Color
       BorderStyle: =BorderStyle.None
-      RadiusTopLeft: =15
-      RadiusTopRight: =15
-      RadiusBottomLeft: =15
-      RadiusBottomRight: =15
+      RadiusTopLeft: =14
+      RadiusTopRight: =14
+      RadiusBottomLeft: =14
+      RadiusBottomRight: =14
       Font: =Font.'Open Sans'
       FontWeight: =FontWeight.Semibold
       Size: =11
@@ -599,10 +889,10 @@
     Properties:
       Text: ="Dashboard architects: Ben Robertson · Alex Cohen"
       X: =48
-      Y: =716
+      Y: =722
       Width: =1270
-      Height: =24
+      Height: =22
       Align: =Align.Right
       Font: =Font.'Open Sans'
       Size: =11
-      Color: =ColorValue("#606A70")
+      Color: =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 1150) / 350)))}, RGBA(96, 106, 112, p))

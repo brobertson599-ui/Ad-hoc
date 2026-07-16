@@ -1,19 +1,34 @@
 # UKIMEA CSLV HUB — Power Apps home screen
 
-A homepage/landing screen for Power Apps that links out to four reporting
+A homepage/landing screen for Power Apps that links out to six reporting
 dashboards and shows each dashboard's live status. Styled with the
 **HPE Design System, light theme** (values from the official
 `hpe-design-tokens` package, v2.2.3 — the same data behind
 [design-system.hpe.design/design-tokens/color-usage](https://design-system.hpe.design/design-tokens/color-usage)),
 laid out following the HPE dashboard template pattern (page header, card
-surfaces on a grey backdrop, status list).
+surfaces on a grey backdrop, status list), with an animated entrance,
+idle motion, a personalised greeting, and a live clock.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `UKIMEA-CSLV-Hub-HomeScreen.pa.yaml` | **The deliverable.** Paste-ready Power Apps YAML — every control on the screen. |
-| `preview/ukimea-cslv-hub-preview.html` | Design preview. Open in a browser to see the layout, colours, and button hover behaviour before building in Power Apps. |
+| `UKIMEA-CSLV-Hub-HomeScreen.pa.yaml` | **The deliverable.** Paste-ready Power Apps YAML — every control on the screen, including the animation timers. |
+| `preview/ukimea-cslv-hub-preview.html` | Design preview. Open in a browser to see the layout, colours, entrance/idle animations, and button hover behaviour before building in Power Apps. |
+
+## The six dashboards
+
+| Button | OnSelect placeholder to replace |
+|---|---|
+| 1% Club | `REPLACE_WITH_1_PERCENT_CLUB_URL` |
+| Attach Wizard [Beta] | `REPLACE_WITH_ATTACH_WIZARD_URL` |
+| SFDC Hygiene | `REPLACE_WITH_SFDC_HYGIENE_URL` |
+| UKIMEA Compute Backlog | `REPLACE_WITH_COMPUTE_BACKLOG_URL` |
+| UKIMEA OS Channel Actuals | `REPLACE_WITH_OS_CHANNEL_ACTUALS_URL` |
+| 3PAR EOSL Tracker | `REPLACE_WITH_3PAR_EOSL_URL` |
+
+(The fourth name was truncated in the source screenshot — edit the `Text`
+of `btnDash4` / `lblStatusName4` if the full name differs.)
 
 ## How to build the screen in Power Apps
 
@@ -23,17 +38,46 @@ surfaces on a grey backdrop, status list).
 2. Open `UKIMEA-CSLV-Hub-HomeScreen.pa.yaml` and copy the **entire file**.
 3. In Power Apps Studio, click on the empty screen canvas and press
    **Ctrl+V**. Studio understands YAML on the clipboard and recreates all
-   the controls (background, header, four buttons, status board, credit).
-4. Select each of `btnDash1`–`btnDash4` and replace
-   `REPLACE_WITH_DASHBOARD_1_URL` … `_4_URL` in the `OnSelect` property
-   with your real dashboard links, e.g.
+   the controls (timers, background, header, six buttons, status board,
+   credit).
+4. Select each of `btnDash1`–`btnDash6` and replace the placeholder in the
+   `OnSelect` property with the real link, e.g.
    `Launch("https://app.powerbi.com/...")`.
-5. Rename the button/status texts ("Dashboard 1" …) to the real dashboard
-   names.
+
+## Animations & extras
+
+Everything is driven by three invisible **Timer** controls (Power Apps'
+native way to animate — no add-ins needed):
+
+- **Entrance cascade** (`tmrEntrance`, one-shot, ~1.5 s): the HPE-green
+  brand stripe sweeps across the top, the title and greeting fade in, the
+  six buttons rise and fade in one after another (left-to-right,
+  top-to-bottom), then the status board and its rows follow, and finally
+  the credit. Easing is a cubic ease-out for that soft HPE-style landing.
+  When the timer ends it sets `varLoaded`, which pins every control to its
+  final state (so nothing ever re-animates or flickers afterwards).
+- **Idle motion** (`tmrIdle`, 4 s loop): the six status dots gently
+  "breathe" (opacity oscillates via a sine wave), which makes the board
+  read as live without being distracting.
+- **Live clock** (`tmrClock`, 1 s tick): sets `varNow`, which feeds the
+  date/time readout in the header.
+- **Personalised greeting**: "Good morning / afternoon / evening, {first
+  name}" from `User().FullName` — it greets whoever opens the app.
+- **Micro-interactions**: buttons change colour on hover (white →
+  HPE primary green) and darken again while pressed; tooltips and
+  accessible labels on every link; a visible keyboard-focus ring using
+  HPE's `color.focus`.
+
+**Tuning:** entrance timing lives in the `With({p: ...})` formulas — the
+first number is the control's start delay (ms), the second is its duration.
+`tmrIdle.Duration` sets the breathing speed. **Removing motion:** delete
+the three timers and replace each `With(...)` formula with its resting
+value (the README table below has the colours). The HTML preview also
+respects the OS "reduced motion" accessibility setting.
 
 ## Updating the status board
 
-Each of the four rows is: **colour dot → dashboard name → reason
+Each of the six rows is: **colour dot → dashboard name → reason
 description → status badge**. Status is always shown as colour **plus** a
 written word, so it stays readable for everyone (including colour-blind
 users and print-outs).
@@ -41,16 +85,20 @@ users and print-outs).
 To change a dashboard's status, set these three things on its row
 (`crStatusDot n`, `lblStatusDesc n`, `btnStatusBadge n`):
 
-| Status | Dot `Fill` (icon token) | Badge `Fill` (background token) | Badge `Text` |
+| Status | Dot colour (icon token) | Badge `Fill` (background token) | Badge `Text` |
 |---|---|---|---|
-| Working normally | `#009A71` (icon.ok) | `#D1FFEE` (background.ok) | `Operational` |
-| Working but impaired | `#D36D00` (icon.warning) | `#FFF3DD` (background.warning) | `Degraded` |
-| Not working | `#CC1F1A` (icon.critical) | `#FFECEC` (background.critical) | `Down` |
-| Unknown | `#606A70` (icon.unknown) | `RGBA(0, 0, 0, 10)` (background.unknown) | `Unknown` |
+| Working normally | `RGBA(0, 154, 113, …)` — icon.ok `#009A71` | `RGBA(209, 255, 238, …)` — background.ok `#D1FFEE` | `Operational` |
+| Working but impaired | `RGBA(211, 109, 0, …)` — icon.warning `#D36D00` | `RGBA(255, 243, 221, …)` — background.warning `#FFF3DD` | `Degraded` |
+| Not working | `RGBA(204, 31, 26, …)` — icon.critical `#CC1F1A` | `RGBA(255, 236, 236, …)` — background.critical `#FFECEC` | `Down` |
+| Unknown | `RGBA(96, 106, 112, …)` — icon.unknown `#606A70` | `RGBA(0, 0, 0, 10)` — background.unknown | `Unknown` |
 
-…and write a one-line reason in the description label
-(e.g. *"Unavailable – data gateway offline"*). Update `lblStatusUpdated`
-with the current date/time when you make a change.
+Because the dot and badge fills are animated, change only the **RGB
+numbers** inside the existing `RGBA(...)` in each formula and leave the
+alpha expression (the `p * (...)` / `p` part) as it is.
+
+…then write a one-line reason in the description label
+(e.g. *"Unavailable – data gateway offline"*) and update
+`lblStatusUpdated` with the current date/time.
 
 ## HPE light-theme tokens used
 
