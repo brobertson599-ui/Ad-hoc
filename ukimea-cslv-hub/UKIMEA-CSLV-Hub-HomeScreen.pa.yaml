@@ -156,12 +156,12 @@
       Color: |-
         =With({p: If(varLoaded = true || tmrEntrance.Value = 0, 1, Min(1, Max(0, (tmrEntrance.Value - 120) / 400)))}, RGBA(96, 106, 112, p))
 
-# Personalised greeting — uses the signed-in user's first name.
+# Time-of-day greeting (deliberately not personalised).
 - lblGreeting:
     Control: Label
     Properties:
       Text: |-
-        ="Good " & If(Hour(If(IsBlank(varNow), Now(), varNow)) < 12, "morning", Hour(If(IsBlank(varNow), Now(), varNow)) < 17, "afternoon", "evening") & If(IsBlank(User().FullName), "", ", " & First(Split(User().FullName, " ")).Value)
+        ="Good " & If(Hour(If(IsBlank(varNow), Now(), varNow)) < 12, "morning", Hour(If(IsBlank(varNow), Now(), varNow)) < 17, "afternoon", "evening")
       X: =766
       Y: |-
         =With({p: If(varLoaded = true || tmrEntrance.Value = 0, 1, Min(1, Max(0, (tmrEntrance.Value - 150) / 400)))}, 26 + 10 * Power(1 - p, 3))

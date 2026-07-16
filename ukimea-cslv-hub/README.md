@@ -117,8 +117,8 @@ native way to animate — no add-ins needed):
   read as live without being distracting.
 - **Live clock** (`tmrClock`, 1 s tick): sets `varNow`, which feeds the
   date/time readout in the header.
-- **Personalised greeting**: "Good morning / afternoon / evening, {first
-  name}" from `User().FullName` — it greets whoever opens the app.
+- **Time-of-day greeting**: "Good morning / afternoon / evening" in the
+  header, updating live with the clock (deliberately not personalised).
 - **Stock-exchange status ticker** (`htmlTicker`): a dark band pinned to
   the bottom of the screen where every dashboard's name and status scroll
   continuously, NYSE-style — ▲ green for Operational, ◆ amber for

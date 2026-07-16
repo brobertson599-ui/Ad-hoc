@@ -407,9 +407,8 @@
   </div>
 
   <script>
-    // Greeting + live clock. In the Power Apps build these come from
-    // User().FullName and the tmrClock timer; here the greeting has no
-    // signed-in user, so it shows the time-of-day part only.
+    // Time-of-day greeting + live clock, matching the Power Apps build
+    // (driven there by the tmrClock timer).
     function tick() {
       var now = new Date();
       var h = now.getHours();

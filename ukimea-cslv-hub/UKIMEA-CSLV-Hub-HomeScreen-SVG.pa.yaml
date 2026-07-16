@@ -117,12 +117,12 @@
         "<text class='t2' x='110' y='80' font-family='Segoe UI,Arial,sans-serif' font-size='15' fill='#606a70'>Central access to UKIMEA CSLV reporting dashboards</text>" &
         "</svg>")
 
-# Personalised greeting — uses the signed-in user's first name.
+# Time-of-day greeting (deliberately not personalised).
 - lblGreeting:
     Control: Label
     Properties:
       Text: |-
-        ="Good " & If(Hour(If(IsBlank(varNow), Now(), varNow)) < 12, "morning", Hour(If(IsBlank(varNow), Now(), varNow)) < 17, "afternoon", "evening") & If(IsBlank(User().FullName), "", ", " & First(Split(User().FullName, " ")).Value)
+        ="Good " & If(Hour(If(IsBlank(varNow), Now(), varNow)) < 12, "morning", Hour(If(IsBlank(varNow), Now(), varNow)) < 17, "afternoon", "evening")
       X: =766
       Y: =26
       Width: =552
