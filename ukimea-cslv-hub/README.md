@@ -43,7 +43,9 @@ emits a radar "ping" ring in its status colour.
 3. Columns, exactly: **Dashboard | Status | Text | URL**
    - `Dashboard` — must exactly match the six names shown in the app
      (the row labels are the lookup keys)
-   - `Status` — `Operational`, `Limited` or `Down` (anything else shows grey)
+   - `Status` — `green`, `orange` or `red` (or `Operational`, `Limited`,
+     `Down` — the app translates colour words into the badge words;
+     anything else shows grey Unknown)
    - `Text` — the one-line reason shown in the status board
    - `URL` — the link the dashboard's button opens
 4. In Power Apps Studio: **Data pane → Add data → Excel Online

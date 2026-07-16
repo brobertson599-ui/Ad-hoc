@@ -28,7 +28,9 @@
 #      c. Columns must be exactly:  Dashboard | Status | Text | URL
 #         - Dashboard: must EXACTLY match the six names shown in the app
 #           (the row labels lblStatusName1-6 are the lookup keys)
-#         - Status: Operational, Limited or Down (anything else shows grey)
+#         - Status: green / orange / red (or Operational / Limited /
+#           Down) — the app translates colour words into badge words;
+#           anything else shows grey Unknown
 #         - Text: the one-line reason shown in the status board
 #         - URL: the dashboard link the button opens
 #      d. In Power Apps Studio: Data pane > Add data >
@@ -546,7 +548,7 @@
 - btnStatusBadge1:
     Control: Classic/Button
     Properties:
-      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName1.Text, Status)
+      Text: =Switch(Lower(LookUp(DashboardStatus, Dashboard = lblStatusName1.Text, Status)), "green", "Operational", "operational", "Operational", "orange", "Limited", "amber", "Limited", "limited", "Limited", "red", "Down", "down", "Down", "Unknown")
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
@@ -614,7 +616,7 @@
 - btnStatusBadge2:
     Control: Classic/Button
     Properties:
-      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName2.Text, Status)
+      Text: =Switch(Lower(LookUp(DashboardStatus, Dashboard = lblStatusName2.Text, Status)), "green", "Operational", "operational", "Operational", "orange", "Limited", "amber", "Limited", "limited", "Limited", "red", "Down", "down", "Down", "Unknown")
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
@@ -682,7 +684,7 @@
 - btnStatusBadge3:
     Control: Classic/Button
     Properties:
-      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName3.Text, Status)
+      Text: =Switch(Lower(LookUp(DashboardStatus, Dashboard = lblStatusName3.Text, Status)), "green", "Operational", "operational", "Operational", "orange", "Limited", "amber", "Limited", "limited", "Limited", "red", "Down", "down", "Down", "Unknown")
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
@@ -750,7 +752,7 @@
 - btnStatusBadge4:
     Control: Classic/Button
     Properties:
-      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName4.Text, Status)
+      Text: =Switch(Lower(LookUp(DashboardStatus, Dashboard = lblStatusName4.Text, Status)), "green", "Operational", "operational", "Operational", "orange", "Limited", "amber", "Limited", "limited", "Limited", "red", "Down", "down", "Down", "Unknown")
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
@@ -818,7 +820,7 @@
 - btnStatusBadge5:
     Control: Classic/Button
     Properties:
-      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName5.Text, Status)
+      Text: =Switch(Lower(LookUp(DashboardStatus, Dashboard = lblStatusName5.Text, Status)), "green", "Operational", "operational", "Operational", "orange", "Limited", "amber", "Limited", "limited", "Limited", "red", "Down", "down", "Down", "Unknown")
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
@@ -886,7 +888,7 @@
 - btnStatusBadge6:
     Control: Classic/Button
     Properties:
-      Text: =LookUp(DashboardStatus, Dashboard = lblStatusName6.Text, Status)
+      Text: =Switch(Lower(LookUp(DashboardStatus, Dashboard = lblStatusName6.Text, Status)), "green", "Operational", "operational", "Operational", "orange", "Limited", "amber", "Limited", "limited", "Limited", "red", "Down", "down", "Down", "Unknown")
       DisplayMode: =DisplayMode.View
       TabIndex: =-1
       X: =1136
