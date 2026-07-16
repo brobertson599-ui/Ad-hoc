@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UKIMEA CSLV HUB — design preview</title>
+<style>
+  /* HPE Design System — light theme tokens (hpe-design-tokens v2.2.3) */
+  :root {
+    --background-back: #f7f7f7;        /* page background, elevation 0 */
+    --background-front: #ffffff;       /* card surface, elevation 1 */
+    --brand: #01a982;                  /* HPE brand, green-600 */
+    --primary-strong: #068667;         /* background-primary-strong, green-700 */
+    --primary-strong-hover: #006750;   /* green-800 */
+    --text-strong: #292d3a;            /* headings */
+    --text-default: #3e4550;
+    --text-weak: #606a70;
+    --border-weak: #d4d8db;
+    --separator: #e6e8e9;              /* grey-200 */
+    --background-ok: #d1ffee;
+    --background-warning: #fff3dd;
+    --background-critical: #ffecec;
+    --background-unknown: rgba(0, 0, 0, 0.04);
+    --icon-ok: #009a71;
+    --icon-warning: #d36d00;
+    --icon-critical: #cc1f1a;
+    --icon-unknown: #606a70;
+    --focus: #292d3a;
+    --shadow-small: 0 2px 4px rgba(0, 0, 0, 0.12);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.12);
+    --radius-medium: 12px;
+    --radius-full: 9999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "Metric", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--background-back);
+    color: var(--text-default);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Header ---- */
+  .brand-stripe { height: 6px; background: var(--brand); }
+
+  header.app-header {
+    background: var(--background-front);
+    border-bottom: 1px solid var(--separator);
+    padding: 20px 48px 22px;
+  }
+  header.app-header h1 {
+    color: var(--text-strong);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+  header.app-header p {
+    color: var(--text-weak);
+    font-size: 0.95rem;
+    margin-top: 4px;
+  }
+
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 1366px;
+    margin: 0 auto;
+    padding: 24px 48px 16px;
+  }
+
+  h2.section-title {
+    color: var(--text-strong);
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 6px 0 14px;
+  }
+
+  /* ---- Dashboard link buttons ---- */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 24px;
+  }
+  a.dash-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+    padding: 16px;
+    background: var(--background-front);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-small);
+    color: var(--text-strong);
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+    transition: background 150ms ease, color 150ms ease,
+                border-color 150ms ease, box-shadow 150ms ease,
+                transform 150ms ease;
+  }
+  a.dash-btn:hover {
+    background: var(--primary-strong);
+    border-color: var(--primary-strong);
+    color: #ffffff;
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+  a.dash-btn:active {
+    background: var(--primary-strong-hover);
+    border-color: var(--primary-strong-hover);
+    color: #ffffff;
+    transform: translateY(0);
+  }
+  a.dash-btn:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+
+  /* ---- Status board ---- */
+  section.status-card {
+    margin-top: 32px;
+    background: var(--background-front);
+    border: 1px solid var(--border-weak);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-small);
+    padding: 24px 32px 8px;
+  }
+  .status-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--separator);
+  }
+  .status-head h2 {
+    color: var(--text-strong);
+    font-size: 1.15rem;
+    font-weight: 600;
+  }
+  .status-head .updated {
+    color: var(--text-weak);
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  ul.status-list { list-style: none; }
+  ul.status-list li {
+    display: grid;
+    grid-template-columns: 14px 260px 1fr 150px;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 8px;
+    border-bottom: 1px solid var(--separator);
+  }
+  ul.status-list li:last-child { border-bottom: none; }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex: none;
+  }
+  .dot.ok       { background: var(--icon-ok); }
+  .dot.warning  { background: var(--icon-warning); }
+  .dot.critical { background: var(--icon-critical); }
+  .dot.unknown  { background: var(--icon-unknown); }
+
+  .status-name {
+    color: var(--text-strong);
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+  .status-desc {
+    color: var(--text-weak);
+    font-size: 0.9rem;
+  }
+
+  .badge {
+    justify-self: end;
+    display: inline-block;
+    padding: 5px 18px;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-default);
+    white-space: nowrap;
+  }
+  .badge.ok       { background: var(--background-ok); }
+  .badge.warning  { background: var(--background-warning); }
+  .badge.critical { background: var(--background-critical); }
+  .badge.unknown  { background: var(--background-unknown); }
+
+  /* ---- Credit ---- */
+  footer.credit {
+    max-width: 1366px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 12px 48px 24px;
+    text-align: right;
+    color: var(--text-weak);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 820px) {
+    header.app-header, main, footer.credit { padding-left: 20px; padding-right: 20px; }
+    ul.status-list li {
+      grid-template-columns: 14px 1fr auto;
+      grid-template-rows: auto auto;
+    }
+    .status-desc { grid-column: 2 / 4; grid-row: 2; }
+  }
+</style>
+</head>
+<body>
+  <div class="brand-stripe"></div>
+
+  <header class="app-header">
+    <h1>UKIMEA CSLV HUB</h1>
+    <p>Central access to UKIMEA CSLV reporting dashboards</p>
+  </header>
+
+  <main>
+    <h2 class="section-title">Dashboards</h2>
+    <nav class="dash-grid" aria-label="Dashboard links">
+      <!-- Replace href placeholders with the real dashboard URLs -->
+      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_1_URL">Dashboard 1</a>
+      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_2_URL">Dashboard 2</a>
+      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_3_URL">Dashboard 3</a>
+      <a class="dash-btn" href="REPLACE_WITH_DASHBOARD_4_URL">Dashboard 4</a>
+    </nav>
+
+    <section class="status-card" aria-label="Dashboard status">
+      <div class="status-head">
+        <h2>Dashboard status</h2>
+        <span class="updated">Last updated: 16 Jul 2026, 09:00</span>
+      </div>
+      <ul class="status-list">
+        <li>
+          <span class="dot ok" aria-hidden="true"></span>
+          <span class="status-name">Dashboard 1</span>
+          <span class="status-desc">All data sources connected – refreshing normally.</span>
+          <span class="badge ok">Operational</span>
+        </li>
+        <li>
+          <span class="dot ok" aria-hidden="true"></span>
+          <span class="status-name">Dashboard 2</span>
+          <span class="status-desc">Live – last refresh completed successfully.</span>
+          <span class="badge ok">Operational</span>
+        </li>
+        <li>
+          <span class="dot warning" aria-hidden="true"></span>
+          <span class="status-name">Dashboard 3</span>
+          <span class="status-desc">Slow refresh – [brief reason, e.g. upstream source latency].</span>
+          <span class="badge warning">Degraded</span>
+        </li>
+        <li>
+          <span class="dot critical" aria-hidden="true"></span>
+          <span class="status-name">Dashboard 4</span>
+          <span class="status-desc">Unavailable – [brief reason, e.g. data gateway offline].</span>
+          <span class="badge critical">Down</span>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="credit">
+    Dashboard architects: Ben Robertson &middot; Alex Cohen
+  </footer>
+</body>
+</html>

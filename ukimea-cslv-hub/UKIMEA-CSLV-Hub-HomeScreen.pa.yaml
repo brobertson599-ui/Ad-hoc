@@ -1,0 +1,608 @@
+# ============================================================================
+# UKIMEA CSLV HUB — Power Apps home screen (paste-ready YAML)
+# ----------------------------------------------------------------------------
+# HOW TO USE
+#   1. In Power Apps Studio, create a canvas app (Tablet, 16:9 — 1366 x 768).
+#   2. Open the screen you want the hub on (or add a new blank screen).
+#   3. Copy the ENTIRE contents of this file.
+#   4. Click on the empty canvas and paste (Ctrl+V). Power Apps Studio
+#      accepts YAML on the clipboard and recreates every control below.
+#   5. Replace the four REPLACE_WITH_DASHBOARD_*_URL placeholders in the
+#      OnSelect of btnDash1–btnDash4 with your real dashboard links.
+#   6. Update the status rows (badge Text/Fill, dot Fill, descriptions)
+#      whenever a dashboard's health changes — the colour pairs to use are
+#      listed next to each badge.
+#
+# COLOURS — HPE Design System, light theme (design-tokens v2.2.3)
+#   page background   #F7F7F7  (background-back)
+#   card surface      #FFFFFF  (background-front)
+#   brand accent      #01A982  (HPE brand green-600)
+#   heading text      #292D3A  (text-strong)
+#   body text         #3E4550  (text-default)
+#   supporting text   #606A70  (text-weak)
+#   card border       #D4D8DB  (border-weak)
+#   button hover      #068667  (background-primary-strong, green-700)
+#   button pressed    #006750  (green-800)
+#   status OK         dot #009A71 (icon-ok)       badge #D1FFEE (background-ok)
+#   status warning    dot #D36D00 (icon-warning)  badge #FFF3DD (background-warning)
+#   status critical   dot #CC1F1A (icon-critical) badge #FFECEC (background-critical)
+#   status unknown    dot #606A70 (icon-unknown)  badge RGBA(0,0,0,10) (background-unknown)
+# ============================================================================
+
+# ---- Page background (elevation 0) -----------------------------------------
+- recPageBackground:
+    Control: Rectangle
+    Properties:
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =Parent.Height
+      Fill: =ColorValue("#F7F7F7")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Header -----------------------------------------------------------------
+- recHeaderBar:
+    Control: Rectangle
+    Properties:
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =112
+      Fill: =ColorValue("#FFFFFF")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- recBrandStripe:
+    Control: Rectangle
+    Properties:
+      X: =0
+      Y: =0
+      Width: =Parent.Width
+      Height: =6
+      Fill: =ColorValue("#01A982")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- recHeaderRule:
+    Control: Rectangle
+    Properties:
+      X: =0
+      Y: =111
+      Width: =Parent.Width
+      Height: =1
+      Fill: =ColorValue("#E6E8E9")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- lblAppTitle:
+    Control: Label
+    Properties:
+      Text: ="UKIMEA CSLV HUB"
+      X: =48
+      Y: =24
+      Width: =800
+      Height: =46
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Bold
+      Size: =26
+      Color: =ColorValue("#292D3A")
+
+- lblAppSubtitle:
+    Control: Label
+    Properties:
+      Text: ="Central access to UKIMEA CSLV reporting dashboards"
+      X: =48
+      Y: =72
+      Width: =800
+      Height: =26
+      Font: =Font.'Open Sans'
+      Size: =12
+      Color: =ColorValue("#606A70")
+
+# ---- Dashboard links ---------------------------------------------------------
+- lblSectionDashboards:
+    Control: Label
+    Properties:
+      Text: ="Dashboards"
+      X: =48
+      Y: =138
+      Width: =400
+      Height: =26
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =15
+      Color: =ColorValue("#292D3A")
+
+- btnDash1:
+    Control: Classic/Button
+    Properties:
+      Text: ="Dashboard 1"
+      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_1_URL")
+      Tooltip: ="Open Dashboard 1"
+      AccessibleLabel: ="Open Dashboard 1"
+      X: =48
+      Y: =176
+      Width: =298
+      Height: =120
+      Fill: =ColorValue("#FFFFFF")
+      Color: =ColorValue("#292D3A")
+      BorderColor: =ColorValue("#D4D8DB")
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =16
+
+- btnDash2:
+    Control: Classic/Button
+    Properties:
+      Text: ="Dashboard 2"
+      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_2_URL")
+      Tooltip: ="Open Dashboard 2"
+      AccessibleLabel: ="Open Dashboard 2"
+      X: =370
+      Y: =176
+      Width: =298
+      Height: =120
+      Fill: =ColorValue("#FFFFFF")
+      Color: =ColorValue("#292D3A")
+      BorderColor: =ColorValue("#D4D8DB")
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =16
+
+- btnDash3:
+    Control: Classic/Button
+    Properties:
+      Text: ="Dashboard 3"
+      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_3_URL")
+      Tooltip: ="Open Dashboard 3"
+      AccessibleLabel: ="Open Dashboard 3"
+      X: =692
+      Y: =176
+      Width: =298
+      Height: =120
+      Fill: =ColorValue("#FFFFFF")
+      Color: =ColorValue("#292D3A")
+      BorderColor: =ColorValue("#D4D8DB")
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =16
+
+- btnDash4:
+    Control: Classic/Button
+    Properties:
+      Text: ="Dashboard 4"
+      OnSelect: =Launch("REPLACE_WITH_DASHBOARD_4_URL")
+      Tooltip: ="Open Dashboard 4"
+      AccessibleLabel: ="Open Dashboard 4"
+      X: =1014
+      Y: =176
+      Width: =298
+      Height: =120
+      Fill: =ColorValue("#FFFFFF")
+      Color: =ColorValue("#292D3A")
+      BorderColor: =ColorValue("#D4D8DB")
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      HoverFill: =ColorValue("#068667")
+      HoverColor: =ColorValue("#FFFFFF")
+      HoverBorderColor: =ColorValue("#068667")
+      PressedFill: =ColorValue("#006750")
+      PressedColor: =ColorValue("#FFFFFF")
+      PressedBorderColor: =ColorValue("#006750")
+      FocusedBorderColor: =ColorValue("#292D3A")
+      FocusedBorderThickness: =2
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =16
+
+# ---- Status board -------------------------------------------------------------
+# Rounded card surface (a view-only button is used so the card gets HPE's
+# 12px radius, which plain rectangles don't support).
+- btnStatusCardBg:
+    Control: Classic/Button
+    Properties:
+      Text: =""
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =48
+      Y: =328
+      Width: =1270
+      Height: =352
+      Fill: =ColorValue("#FFFFFF")
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      BorderColor: =ColorValue("#D4D8DB")
+      BorderThickness: =1
+      BorderStyle: =BorderStyle.Solid
+      RadiusTopLeft: =12
+      RadiusTopRight: =12
+      RadiusBottomLeft: =12
+      RadiusBottomRight: =12
+
+- lblStatusTitle:
+    Control: Label
+    Properties:
+      Text: ="Dashboard status"
+      X: =80
+      Y: =352
+      Width: =400
+      Height: =28
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =16
+      Color: =ColorValue("#292D3A")
+
+- lblStatusUpdated:
+    Control: Label
+    Properties:
+      Text: ="Last updated: 16 Jul 2026, 09:00"
+      X: =806
+      Y: =356
+      Width: =480
+      Height: =22
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      Size: =11
+      Color: =ColorValue("#606A70")
+
+- recStatusRule0:
+    Control: Rectangle
+    Properties:
+      X: =80
+      Y: =394
+      Width: =1206
+      Height: =1
+      Fill: =ColorValue("#E6E8E9")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Row 1 — Operational -------------------------------------------------------
+- crStatusDot1:
+    Control: Circle
+    Properties:
+      X: =88
+      Y: =426
+      Width: =14
+      Height: =14
+      Fill: =ColorValue("#009A71")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- lblStatusName1:
+    Control: Label
+    Properties:
+      Text: ="Dashboard 1"
+      X: =118
+      Y: =400
+      Width: =290
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc1:
+    Control: Label
+    Properties:
+      Text: ="All data sources connected – refreshing normally."
+      X: =420
+      Y: =400
+      Width: =690
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =12
+      Color: =ColorValue("#606A70")
+
+# Badge colours — OK: Fill #D1FFEE · Warning: Fill #FFF3DD · Down: Fill #FFECEC
+- btnStatusBadge1:
+    Control: Classic/Button
+    Properties:
+      Text: ="Operational"
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =418
+      Width: =150
+      Height: =30
+      Fill: =ColorValue("#D1FFEE")
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =15
+      RadiusTopRight: =15
+      RadiusBottomLeft: =15
+      RadiusBottomRight: =15
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- recStatusRule1:
+    Control: Rectangle
+    Properties:
+      X: =80
+      Y: =465
+      Width: =1206
+      Height: =1
+      Fill: =ColorValue("#E6E8E9")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Row 2 — Operational -------------------------------------------------------
+- crStatusDot2:
+    Control: Circle
+    Properties:
+      X: =88
+      Y: =492
+      Width: =14
+      Height: =14
+      Fill: =ColorValue("#009A71")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- lblStatusName2:
+    Control: Label
+    Properties:
+      Text: ="Dashboard 2"
+      X: =118
+      Y: =466
+      Width: =290
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc2:
+    Control: Label
+    Properties:
+      Text: ="Live – last refresh completed successfully."
+      X: =420
+      Y: =466
+      Width: =690
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =12
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge2:
+    Control: Classic/Button
+    Properties:
+      Text: ="Operational"
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =484
+      Width: =150
+      Height: =30
+      Fill: =ColorValue("#D1FFEE")
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =15
+      RadiusTopRight: =15
+      RadiusBottomLeft: =15
+      RadiusBottomRight: =15
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- recStatusRule2:
+    Control: Rectangle
+    Properties:
+      X: =80
+      Y: =531
+      Width: =1206
+      Height: =1
+      Fill: =ColorValue("#E6E8E9")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Row 3 — Degraded (example) ------------------------------------------------
+- crStatusDot3:
+    Control: Circle
+    Properties:
+      X: =88
+      Y: =558
+      Width: =14
+      Height: =14
+      Fill: =ColorValue("#D36D00")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- lblStatusName3:
+    Control: Label
+    Properties:
+      Text: ="Dashboard 3"
+      X: =118
+      Y: =532
+      Width: =290
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc3:
+    Control: Label
+    Properties:
+      Text: ="Slow refresh – [brief reason, e.g. upstream source latency]."
+      X: =420
+      Y: =532
+      Width: =690
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =12
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge3:
+    Control: Classic/Button
+    Properties:
+      Text: ="Degraded"
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =550
+      Width: =150
+      Height: =30
+      Fill: =ColorValue("#FFF3DD")
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =15
+      RadiusTopRight: =15
+      RadiusBottomLeft: =15
+      RadiusBottomRight: =15
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+- recStatusRule3:
+    Control: Rectangle
+    Properties:
+      X: =80
+      Y: =597
+      Width: =1206
+      Height: =1
+      Fill: =ColorValue("#E6E8E9")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+# ---- Row 4 — Down (example) ----------------------------------------------------
+- crStatusDot4:
+    Control: Circle
+    Properties:
+      X: =88
+      Y: =624
+      Width: =14
+      Height: =14
+      Fill: =ColorValue("#CC1F1A")
+      BorderStyle: =BorderStyle.None
+      TabIndex: =-1
+
+- lblStatusName4:
+    Control: Label
+    Properties:
+      Text: ="Dashboard 4"
+      X: =118
+      Y: =598
+      Width: =290
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =13
+      Color: =ColorValue("#292D3A")
+
+- lblStatusDesc4:
+    Control: Label
+    Properties:
+      Text: ="Unavailable – [brief reason, e.g. data gateway offline]."
+      X: =420
+      Y: =598
+      Width: =690
+      Height: =65
+      VerticalAlign: =VerticalAlign.Middle
+      Font: =Font.'Open Sans'
+      Size: =12
+      Color: =ColorValue("#606A70")
+
+- btnStatusBadge4:
+    Control: Classic/Button
+    Properties:
+      Text: ="Down"
+      DisplayMode: =DisplayMode.View
+      TabIndex: =-1
+      X: =1136
+      Y: =616
+      Width: =150
+      Height: =30
+      Fill: =ColorValue("#FFECEC")
+      HoverFill: =Self.Fill
+      PressedFill: =Self.Fill
+      Color: =ColorValue("#3E4550")
+      HoverColor: =Self.Color
+      PressedColor: =Self.Color
+      BorderStyle: =BorderStyle.None
+      RadiusTopLeft: =15
+      RadiusTopRight: =15
+      RadiusBottomLeft: =15
+      RadiusBottomRight: =15
+      Font: =Font.'Open Sans'
+      FontWeight: =FontWeight.Semibold
+      Size: =11
+
+# ---- Credit --------------------------------------------------------------------
+- lblArchitects:
+    Control: Label
+    Properties:
+      Text: ="Dashboard architects: Ben Robertson · Alex Cohen"
+      X: =48
+      Y: =716
+      Width: =1270
+      Height: =24
+      Align: =Align.Right
+      Font: =Font.'Open Sans'
+      Size: =11
+      Color: =ColorValue("#606A70")
