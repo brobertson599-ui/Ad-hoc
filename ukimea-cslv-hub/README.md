@@ -88,6 +88,11 @@ native way to animate — no add-ins needed):
   accessible labels on every link; a visible keyboard-focus ring using
   HPE's `color.focus`; the preview's ticker pauses on hover.
 
+**Edit mode vs Preview:** timers only run in Preview (F5) and the
+published app. In Studio's edit mode the screen simply shows its
+finished resting state — every animation formula falls back to "fully
+visible" while `tmrEntrance` hasn't started.
+
 **Tuning:** entrance timing lives in the `With({p: ...})` formulas — the
 first number is the control's start delay (ms), the second is its duration.
 `tmrIdle.Duration` sets the breathing speed. **Removing motion:** delete
