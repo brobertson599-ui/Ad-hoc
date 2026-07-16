@@ -210,7 +210,6 @@
       Text: ="1% Club"
       OnSelect: =Launch("REPLACE_WITH_1_PERCENT_CLUB_URL")
       Tooltip: ="Open 1% Club"
-      AccessibleLabel: ="Open 1% Club"
       X: =48
       Y: |-
         =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 250) / 400)))}, 146 + 20 * Power(1 - p, 3))
@@ -246,7 +245,6 @@
       Text: ="Attach Wizard [Beta]"
       OnSelect: =Launch("REPLACE_WITH_ATTACH_WIZARD_URL")
       Tooltip: ="Open Attach Wizard [Beta]"
-      AccessibleLabel: ="Open Attach Wizard [Beta]"
       X: =479
       Y: |-
         =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 330) / 400)))}, 146 + 20 * Power(1 - p, 3))
@@ -282,7 +280,6 @@
       Text: ="SFDC Hygiene"
       OnSelect: =Launch("REPLACE_WITH_SFDC_HYGIENE_URL")
       Tooltip: ="Open SFDC Hygiene"
-      AccessibleLabel: ="Open SFDC Hygiene"
       X: =910
       Y: |-
         =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 410) / 400)))}, 146 + 20 * Power(1 - p, 3))
@@ -318,7 +315,6 @@
       Text: ="UKIMEA Compute Backlog"
       OnSelect: =Launch("REPLACE_WITH_COMPUTE_BACKLOG_URL")
       Tooltip: ="Open UKIMEA Compute Backlog"
-      AccessibleLabel: ="Open UKIMEA Compute Backlog"
       X: =48
       Y: |-
         =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 490) / 400)))}, 236 + 20 * Power(1 - p, 3))
@@ -354,7 +350,6 @@
       Text: ="UKIMEA OS Channel Actuals"
       OnSelect: =Launch("REPLACE_WITH_OS_CHANNEL_ACTUALS_URL")
       Tooltip: ="Open UKIMEA OS Channel Actuals"
-      AccessibleLabel: ="Open UKIMEA OS Channel Actuals"
       X: =479
       Y: |-
         =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 570) / 400)))}, 236 + 20 * Power(1 - p, 3))
@@ -390,7 +385,6 @@
       Text: ="3PAR EOSL Tracker"
       OnSelect: =Launch("REPLACE_WITH_3PAR_EOSL_URL")
       Tooltip: ="Open 3PAR EOSL Tracker"
-      AccessibleLabel: ="Open 3PAR EOSL Tracker"
       X: =910
       Y: |-
         =With({p: If(varLoaded = true, 1, Min(1, Max(0, (tmrEntrance.Value - 650) / 400)))}, 236 + 20 * Power(1 - p, 3))
@@ -1002,7 +996,6 @@
       PaddingRight: =0
       PaddingTop: =0
       PaddingBottom: =0
-      TabIndex: =-1
       HtmlText: |-
         ="<div style='font-family:Segoe UI,Arial,sans-serif;font-size:15px;line-height:38px;letter-spacing:1px;white-space:nowrap;'><marquee scrollamount='4'>" &
         "<span style='color:#ffffff;font-weight:600;'>" & Upper(lblStatusName1.Text) & "</span>&nbsp;&nbsp;<span style='color:" & If(btnStatusBadge1.Text = "Operational", "#05cc93", btnStatusBadge1.Text = "Limited", "#ec8c25", btnStatusBadge1.Text = "Down", "#fc6161", "#7d8a92") & ";font-weight:bold;'>" & If(btnStatusBadge1.Text = "Operational", "▲", btnStatusBadge1.Text = "Limited", "◆", btnStatusBadge1.Text = "Down", "▼", "●") & "&nbsp;" & Upper(btnStatusBadge1.Text) & "</span><span style='color:#7d8a92;'>&nbsp;&nbsp;&nbsp;&nbsp;•&nbsp;&nbsp;&nbsp;&nbsp;</span>" &
