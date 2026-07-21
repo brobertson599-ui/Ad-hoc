@@ -140,6 +140,15 @@ the JSON key exactly (watch for double/trailing spaces).
 **Verify the fix:** run once, open 2–3 iterations of Apply to each in the run history and confirm
 the Send email *inputs* differ per iteration.
 
+**Save fails with `InvalidTemplate`: "The repetition action(s) 'For_each' referenced by 'inputs'
+in action 'Send_an_email_(V2)' are not defined in the template."**
+An expression inside Send an email uses `items('For_each')`, but no loop with that internal name
+exists (a token copied from a web example, Copilot, or an older build). Fixes, fastest first:
+1. Rename the loop card to exactly **"For each"** (internal name becomes `For_each`) and save.
+2. If that doesn't clear it, delete the Send an email action and recreate it inside the loop,
+   wiring every field with the `item()` / `outputs()` expressions from the table above — plain
+   `item()` never references a loop by name, so it can't break this way.
+
 ## Optional: greeting by first name
 
 There's no name column, but if emails follow `first.last@hpe.com` you can open the email with
