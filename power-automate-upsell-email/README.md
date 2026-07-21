@@ -149,6 +149,15 @@ exists (a token copied from a web example, Copilot, or an older build). Fixes, f
    wiring every field with the `item()` / `outputs()` expressions from the table above — plain
    `item()` never references a loop by name, so it can't break this way.
 
+**Every person receives every row's email (full cross-join, N×N sends).**
+Same root cause as the duplicate-data issue: a dynamic content token from the "List rows"
+picker section (typically `Email` in the To field) made the designer wrap Send an email in a
+nested loop over the whole table. Fix without losing the configured body: on Send an email use
+**⋯ → Copy to clipboard**, delete the nested loop, re-add the action in the main loop via
+**Add an action → My clipboard**, then set To with the fx expression `item()?['Email']`.
+Rule: inside the loop, never insert tokens from the "List rows" picker section — always type
+`item()?['Column Name']` in the fx Expression tab.
+
 ## Optional: greeting by first name
 
 There's no name column, but if emails follow `first.last@hpe.com` you can open the email with
