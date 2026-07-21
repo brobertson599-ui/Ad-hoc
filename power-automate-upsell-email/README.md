@@ -106,6 +106,40 @@ or a custom mask like `formatNumber(..., '£#,##0')`. `C0` = no decimals; use `C
 - **Outlook connector limits**: ~10,000 sends/day per mailbox; concurrency = 1 (Part 1 step 5) keeps bursts under control. For very large lists add a 5–10 s Delay action after the send.
 - `Feedback Progress` and `Manager entitlement` aren't in the email; insert them anywhere in the body as dynamic content, or via `item()?['Feedback Progress']` / `item()?['Manager entitlement']`.
 
+## Troubleshooting
+
+**Every email contains the same row's data, repeated once per row in the table.**
+Cause: when you insert Excel column tokens from the dynamic-content picker into the Send email
+action while the loop iterates over the *Filter array* output, the designer can't tell those are
+the same rows, so it silently wraps Send email in a second, nested **"Apply to each 1"** that
+iterates over the original unfiltered table — re-sending the current outer row's Compose values
+once per table row. Fix:
+1. In the flow editor, look for a second loop ("Apply to each 1", or Send email sitting in its own loop). Delete the Send email action and that extra loop.
+2. Re-add **Send an email (V2)** inside the *main* loop, after the three Compose actions.
+3. Wire every field using **only the fx Expression tab** — never the dynamic-content picker for Excel columns — using the expressions below. Typed `item()` expressions never trigger auto-nesting.
+
+| Field / placeholder | Expression (fx tab) |
+|---|---|
+| To | `item()?['Email']` |
+| `{{TrackedSum}}` | `outputs('TrackedFormatted')` |
+| `{{UntrackedSum}}` | `outputs('UntrackedFormatted')` |
+| `{{TotalOps}}` | `outputs('TotalOpportunities')` |
+| `{{CCDay1Count}}` | `if(empty(item()?['CC / Day 1 Upsell Count']),'0',item()?['CC / Day 1 Upsell Count'])` |
+| `{{LowPenCount}}` | `if(empty(item()?['Low Pen Rate Count']),'0',item()?['Low Pen Rate Count'])` |
+| `{{NoServicesCount}}` | `if(empty(item()?['No Services Op Count']),'0',item()?['No Services Op Count'])` |
+
+If you renamed a Compose with spaces in the name, replace them with underscores in `outputs()`
+(e.g. "Untracked Formatted" → `outputs('Untracked_Formatted')`).
+
+**One count is blank in the email but correct in the total.** The body token for that column
+either failed to insert (easy to do in code view) or points at a slightly different column name.
+Replace it with the typed `if(empty(...))` expression from the table above. To confirm the exact
+header text, open a finished run → **List rows present in a table → Show raw outputs** and copy
+the JSON key exactly (watch for double/trailing spaces).
+
+**Verify the fix:** run once, open 2–3 iterations of Apply to each in the run history and confirm
+the Send email *inputs* differ per iteration.
+
 ## Optional: greeting by first name
 
 There's no name column, but if emails follow `first.last@hpe.com` you can open the email with
