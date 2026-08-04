@@ -6,37 +6,72 @@ Prepared for a cold-outreach pitch. Demo-first build.
 
 ## 0. Before anything: verify the claims you plan to pitch with
 
-I could not fetch la-casa-weybridge.com from my sandbox (network policy blocked it). Do not
-put a claim in front of a restaurant owner that you have not seen with your own eyes. Run
-these on your machine. Each takes seconds.
+**Rule, before any of this: look, do not probe.** Reading page source and a published
+sitemap is ordinary browsing and entirely legitimate. Running a vulnerability scanner, an
+exploit, or a login attempt against a server you do not own is an offence under the Computer
+Misuse Act 1990 — regardless of good intentions, and regardless of whether it "worked". It
+would also end any prospect of the relationship. Every finding below came from View Source.
+Keep it that way.
 
-**Is the old plugin really there, and what version?**
+### Confirmed by page source (screenshots on file, 4 Aug 2026)
+
+- `<meta name="generator" content="Powered by Slider Revolution 5.4.6.4">` — the plugin is
+  there **and the site publicly announces its exact version**, so it can be found by anyone
+  scanning for that version without any probing at all. 5.4.6.4 dates to 2018 and sits below
+  every fixed version in the public vulnerability database.
+- `<meta name="generator" content="WordPress 6.2.2" />` — WordPress core itself, released
+  May 2023. This is the bigger finding: it is not one stale plugin, it is a whole install
+  frozen for about three years, missing every core security release since.
+- `<meta name="generator" content="Site Kit by Google 1.68.0" />` and the `twentyseventeen`
+  theme — same era, same neglect.
+- `<a href="http://www.la-casa-weybridge.com/wp-content/upl…">Drinks menu</a>` — a genuine
+  insecure internal link to their own content.
+- The menus are PDFs sitting in `wp-content/uploads`, consistent with the 2022 dating.
+
+### Refuted — remove these from the pitch
+
+- **"The menu page's canonical URL is http://"** — it is not. The source shows
+  `<link rel="canonical" href="https://www.la-casa-weybridge.com/house-menu/" />`. Drop this
+  claim entirely.
+- **"There is no sitemap"** — there is. `/sitemap.xml` returns 404, which is what my original
+  check looked for, but WordPress core serves its own at `/wp-sitemap.xml`, listing four
+  sub-sitemaps. Reframe (see Appendix point 6); do not claim it is missing.
+
+### Still unverified — and one of them is the whole pitch
+
+**1. The hours contradiction.** Nothing yet proves this, and it is the single most valuable
+point you have. Screenshot the homepage, the booking page and a page footer in one image.
+
+**2. Does `http://` redirect to `https://`?** This decides how hard you can push the security
+angle:
 
 ```
-curl -s https://www.la-casa-weybridge.com/ | grep -o "revslider[^\"']*"
+curl -sI http://www.la-casa-weybridge.com/ | grep -iE "^HTTP|^location"
 ```
 
-Look for `revslider` and a version string like `5.4.6.4` in the output. Screenshot it.
+If you see `301` and a `Location:` starting `https://`, the insecure links repair themselves
+when clicked — the point drops to a hygiene issue and you must stop calling it "half your
+site loads insecurely". If there is no redirect, it stays a real finding.
 
-**Is HTTPS really inconsistent?**
-
-```
-curl -s https://www.la-casa-weybridge.com/house-menu/ | grep -i "canonical"
-```
-
-If the `href` starts `http://` rather than `https://`, that is your evidence.
-
-**Do the hours really contradict?** Open the homepage, the booking page and the footer of
-any third page side by side. Screenshot all three in one image. This is the single most
-persuasive asset in the pitch — it costs them money and needs no technical explanation.
-
-**Is there a sitemap?**
+**3. Counting the insecure links properly.** "HTTP appeared 15 times" over-counts: `https://`
+contains `http` as a substring, and some matches will be `http://www.w3.org/…` namespace
+identifiers, which are labels rather than links and are harmless. This counts only genuine
+insecure URLs pointing at their own site:
 
 ```
-curl -sI https://www.la-casa-weybridge.com/sitemap.xml | head -1
+curl -s https://www.la-casa-weybridge.com/house-menu/ | grep -o 'http://[^"]*' | grep la-casa | sort -u
 ```
 
-`404` means no sitemap.
+The number of lines that prints is the number you can defend. Note the `/wp-content/uploads/`
+date folder in those paths — it timestamps the PDFs for you.
+
+**4. Meta descriptions.** Confirms the SEO point:
+
+```
+curl -s https://www.la-casa-weybridge.com/house-menu/ | grep -i 'name="description"'
+```
+
+No output means no meta description on that page.
 
 Keep the screenshots. They are the pitch.
 
@@ -338,27 +373,36 @@ edits the same data files. Roughly a day's work, no restructuring. Price it sepa
 
 ## Appendix — the pitch, in an owner's language
 
-Verify each of these first (§0). Lead with money, not technology.
+Re-ordered after the 4 Aug evidence check. Lead with money, not technology. Two claims from
+the original draft were removed because the source refuted them — never reinstate them.
 
-1. **"Your website tells customers two different closing times."** The booking page says you
-   serve until 11pm on a Friday. Every page footer says you close at 10pm. Someone deciding
-   at 9:15pm where to eat reads the 10pm and books elsewhere. *(Cost: covers, every week.)*
+1. **"Your website tells customers two different closing times."** *(Screenshot still needed
+   — get it, this is your opener.)* The booking page says you serve until 11pm on a Friday.
+   Every page footer says you close at 10pm. Someone deciding at 9:15pm where to eat reads
+   the 10pm and books elsewhere. *(Cost: covers, every week.)*
 2. **"You cannot take a booking online. Turquoise can."** Your only route to a table is
    someone ringing during service. People book restaurants at 8pm on a Sunday from the sofa,
    and a phone number is a reason to pick the place that takes bookings on the website.
-3. **"There is a piece of software on your site that has not been updated in about eight
-   years."** It is the single most-attacked component on the web — the family it belongs to
-   put four million sites at risk of having their files read by strangers, and yours is
-   running a version from long before those fixes existed. If it is exploited, your site
-   serves spam or drops out of Google, and your customers see it before you do.
-4. **"Half your site loads insecurely."** Some pages show visitors the padlock, some do not.
-   Browsers increasingly warn people about the ones that do not, and the warning appears
-   right when they are deciding whether to trust you with a booking.
-5. **"Your menu exists in three versions and none of them agree."** The page menu, a PDF from
-   March 2022 and a dessert PDF from May 2022. Your prices have moved since 2022. A customer
-   arriving expecting a 2022 price is an awkward conversation for your staff.
-6. **"The first thing on your homepage is a notice about a holiday closure."** Not the food,
+3. **"Your website has had no maintenance since 2023, and it says so out loud."** *(Verified.)*
+   The site itself publishes what it is running: WordPress 6.2.2, from May 2023, and a slider
+   plugin from 2018. Every security fix released since has been missed. Worse, those version
+   numbers are printed in the page for anyone to read, so nobody has to go looking — a
+   list of sites running the old version is trivial to assemble. If it is broken into, the
+   usual outcome is not drama: your site quietly starts serving spam links, Google notices
+   before you do, and you drop out of local search. *Say "unpatched", never "you have been
+   hacked" — you have no evidence of that and you do not want to accuse anyone.*
+4. **"Your menu is a PDF from 2022, and the link to it is the insecure kind."** *(Verified.)*
+   Your Drinks menu link points at an old-style `http://` address, and the file behind it has
+   sat in the same folder since 2022. Two problems in one link: a customer on a phone gets a
+   PDF they have to pinch and zoom, showing prices you no longer charge.
+5. **"The first thing on your homepage is a notice about a holiday closure."** Not the food,
    not the room, not booking a table.
-7. **"Google barely knows what you are."** No description, no sitemap, none of the structured
-   information Google uses to show hours and menus directly in search results. You are
-   relying entirely on your Google listing.
+6. **"Google is being handed almost nothing about you."** *(Corrected — do NOT say "you have
+   no sitemap", because they do: WordPress generates one automatically.)* The list Google
+   receives is the generic one WordPress makes on its own — four entries, one of which is a
+   list of your staff login names rather than anything a diner would search for. There is no
+   description written for any page and none of the structured information Google uses to
+   show opening hours, prices and menus directly in the search result. Right now you are
+   relying entirely on your Google Business listing; the website is contributing nothing.
+7. **Photography.** The pictures date from 2018–21 and are too small to fill a modern phone
+   screen. Worth raising last, gently — it is the point most likely to be personal.
