@@ -400,7 +400,7 @@ the original draft were removed because the source refuted them — never reinst
 6. **"Google is being handed almost nothing about you."** *(Corrected — do NOT say "you have
    no sitemap", because they do: WordPress generates one automatically.)* The list Google
    receives is the generic one WordPress makes on its own — four entries, one of which is a
-   list of your staff login names rather than anything a diner would search for. There is no
+   list of the accounts that write on the site rather than anything a diner would search for. There is no
    description written for any page and none of the structured information Google uses to
    show opening hours, prices and menus directly in the search result. Right now you are
    relying entirely on your Google Business listing; the website is contributing nothing.
