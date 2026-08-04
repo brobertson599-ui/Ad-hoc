@@ -1,0 +1,15 @@
+# Installed code libraries — never committed, npm install recreates them
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Editor and OS clutter
+.DS_Store
+.vscode/
+*.log
+
+# Secrets — never commit these
+.env
+.env.production
