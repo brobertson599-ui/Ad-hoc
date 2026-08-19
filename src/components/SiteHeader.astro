@@ -1,0 +1,81 @@
+---
+import { restaurant } from '../data/restaurant';
+
+// Navigation lives here so adding a page later means editing one list, not seven
+// pages. The pages themselves arrive in Phase 6 — the links are here now so the
+// structure is visible.
+const nav = [
+  { href: '/', label: 'Home' },
+  { href: '/menu', label: 'Menu' },
+  { href: '/about', label: 'About' },
+  { href: '/takeaway', label: 'Takeaway' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const { pathname } = Astro.url;
+---
+
+<header class="site-header">
+  <a class="wordmark" href="/">{restaurant.name}</a>
+
+  <nav aria-label="Main">
+    <ul>
+      {nav.map((item) => (
+        <li>
+          <a href={item.href} aria-current={pathname === item.href ? 'page' : undefined}>
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <a class="call" href={`tel:${restaurant.phoneHref}`}>{restaurant.phone}</a>
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5ddd3;
+  }
+
+  .wordmark {
+    font-family: ui-serif, Georgia, 'Times New Roman', serif;
+    font-size: 1.5rem;
+    letter-spacing: -0.01em;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    color: #5c534d;
+    text-decoration: none;
+    font-size: 0.9375rem;
+  }
+
+  nav a:hover,
+  nav a[aria-current='page'] {
+    color: #6d1f2b;
+  }
+
+  .call {
+    color: #6d1f2b;
+    font-weight: 600;
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

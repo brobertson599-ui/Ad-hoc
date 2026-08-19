@@ -1,0 +1,136 @@
+---
+import { restaurant } from '../data/restaurant';
+import { weekRows } from '../lib/hours';
+
+// The footer that appears on every page. Note that NOTHING below is typed out by
+// hand — the hours, phone, address and email are all read from
+// src/data/restaurant.ts. This is the fix for the current site, where the same
+// block was copied into every page and then drifted apart.
+const rows = weekRows(restaurant.hours);
+const { address } = restaurant;
+---
+
+<footer class="site-footer">
+  <div class="cols">
+    <section>
+      <h2>Opening hours</h2>
+      <dl class="hours">
+        {rows.map((row) => (
+          <div class="hours-row">
+            <dt>{row.days}</dt>
+            <dd>{row.times}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section>
+      <h2>Find us</h2>
+      <address>
+        {address.street}<br />
+        {address.town}, {address.county}<br />
+        {address.postcode}
+      </address>
+      <p>
+        <a href={restaurant.googleMapsUrl} target="_blank" rel="noopener">Get directions</a>
+      </p>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>
+        {/* tel: and mailto: make these tap-to-dial and tap-to-email on a phone */}
+        <a href={`tel:${restaurant.phoneHref}`}>{restaurant.phone}</a>
+      </p>
+      <p>
+        <a href={`mailto:${restaurant.email}`}>{restaurant.email}</a>
+      </p>
+    </section>
+  </div>
+
+  <p class="legal">
+    &copy; {new Date().getFullYear()} {restaurant.legalName}, {address.town}
+  </p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 4rem;
+    padding: 2.5rem 1.5rem 2rem;
+    background: #1b1614;
+    color: #ded5cc;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .cols {
+    display: grid;
+    gap: 2rem;
+    max-width: 60rem;
+    margin: 0 auto;
+  }
+
+  /* One column on a phone, three side by side once there is room. */
+  @media (min-width: 40rem) {
+    .cols {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+  }
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #b99a6b;
+  }
+
+  .hours {
+    margin: 0;
+  }
+
+  .hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  dt {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  dd {
+    margin: 0;
+    text-align: right;
+  }
+
+  address {
+    font-style: normal;
+    margin: 0 0 0.5rem;
+  }
+
+  p {
+    margin: 0 0 0.35rem;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-color: #8a7c6d;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .legal {
+    max-width: 60rem;
+    margin: 2.5rem auto 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid #332b26;
+    font-size: 0.8125rem;
+    color: #9b8f85;
+  }
+</style>

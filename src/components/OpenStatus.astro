@@ -1,0 +1,72 @@
+---
+/**
+ * The live "Open now / Closed" badge.
+ *
+ * This is the ONE piece of JavaScript that runs in the visitor's browser, and it
+ * has to. The rest of the site is built once on your laptop, so anything decided
+ * at build time would be frozen at whatever time you happened to build it. Open
+ * or closed changes by the minute, so it must be worked out on the visitor's
+ * device — using Weybridge time, not theirs.
+ *
+ * Without JavaScript the badge simply does not appear, and the full opening hours
+ * in the footer still do. Nobody is left without the information.
+ */
+---
+
+<p class="open-status" data-open-status hidden></p>
+
+<script>
+  import { restaurant } from '../data/restaurant';
+  import { statusAt, statusLabel, londonNow } from '../lib/hours';
+
+  const el = document.querySelector<HTMLElement>('[data-open-status]');
+
+  if (el) {
+    const render = () => {
+      const now = londonNow();
+      const status = statusAt(restaurant.hours, now);
+      el.textContent = statusLabel(status, now.day);
+      el.dataset.state = status.open ? 'open' : 'closed';
+      el.hidden = false;
+    };
+
+    render();
+    // Re-check every minute so the badge flips over at opening and closing time
+    // without the visitor reloading the page.
+    setInterval(render, 60_000);
+  }
+</script>
+
+<style>
+  .open-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    background: #eee9e2;
+    color: #4b433d;
+  }
+
+  .open-status::before {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .open-status[data-state='open'] {
+    background: #e4efe4;
+    color: #1f5a2e;
+  }
+
+  .open-status[data-state='closed'] {
+    background: #f2e7e7;
+    color: #7a2b2b;
+  }
+</style>

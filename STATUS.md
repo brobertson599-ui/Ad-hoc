@@ -1,7 +1,11 @@
 # Where this project is up to
 
-**Last updated:** after Phase 1
-**Current position:** Phase 1 complete. Phase 2 not started.
+**Last updated:** after Phase 2
+**Current position:** Phase 2 complete. Phase 3 not started.
+
+> ⚠️ **Opening hours in `src/data/restaurant.ts` are unconfirmed placeholders.** A yellow
+> warning bar shows on every page while you develop, and disappears from the built site.
+> When the owner confirms the real hours, update that file and set `hoursConfirmed = true`.
 
 ## Getting back to work after a break
 
@@ -26,8 +30,9 @@ Then open http://localhost:4321. `Ctrl + C` stops the server. No need to re-clon
 
 - [x] **Phase 1 — Project runs.** Astro 7.1.6, builds clean, placeholder homepage at
       `localhost:4321`.
-- [ ] **Phase 2 — Single source of truth.** `src/data/restaurant.ts` holds hours, phone,
-      address, email. Header and footer render from it. Live "Open now / Closed" badge.
+- [x] **Phase 2 — Single source of truth.** `src/data/restaurant.ts` holds hours, phone,
+      address, email. Header and footer render from it. Live "Open now / Closed" badge,
+      correct in Weybridge time regardless of the visitor's timezone.
 - [ ] **Phase 3 — Homepage.** Palette, fonts, hero, Book a Table button, mobile-first.
 - [ ] **Phase 4 — Menu page.** `src/data/menu.ts`, jump links per course, dietary markers.
 - [ ] **Phase 5 — Demo live.** Netlify, `noindex`, shareable URL. The sales asset.

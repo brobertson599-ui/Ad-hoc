@@ -1,0 +1,101 @@
+---
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { restaurant } from '../data/restaurant';
+
+/**
+ * The wrapper every page uses, so the header and footer are written once and
+ * appear everywhere. A page supplies its own title and description; everything
+ * else is shared.
+ */
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <!-- DEMO ONLY. Keeps this out of Google so it can never be mistaken for, or
+         compete with, the client's real site. Removed at launch — Phase 8. -->
+    <meta name="robots" content="noindex, nofollow" />
+  </head>
+
+  <body>
+    {
+      /* Appears only while you are developing (npm run dev), never on the built
+         site. A standing reminder not to publish guessed opening times. */
+      import.meta.env.DEV && !restaurant.hoursConfirmed && (
+        <p class="dev-warning">
+          ⚠️ Opening hours are unconfirmed placeholders. Get them from the owner in
+          writing, update <code>src/data/restaurant.ts</code>, then set{' '}
+          <code>hoursConfirmed = true</code>.
+        </p>
+      )
+    }
+
+    <SiteHeader />
+    <main>
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>
+
+<style is:global>
+  /* Site-wide basics. The real design work — palette and fonts — is Phase 3. */
+  :root {
+    --ink: #1b1614;
+    --paper: #f7f3ee;
+    --claret: #6d1f2b;
+    --muted: #5c534d;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    /* Stops the footer floating up the screen on short pages. */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  main {
+    flex: 1;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .dev-warning {
+    margin: 0;
+    padding: 0.75rem 1.5rem;
+    background: #fff4cc;
+    color: #5a4708;
+    font-size: 0.875rem;
+    border-bottom: 1px solid #e8d693;
+  }
+
+  .dev-warning code {
+    background: #f7e6b0;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+  }
+</style>
