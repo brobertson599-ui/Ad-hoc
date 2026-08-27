@@ -1,7 +1,15 @@
 # Where this project is up to
 
-**Last updated:** after Phase 2
-**Current position:** Phase 2 complete. Phase 3 not started.
+**Last updated:** after Phase 3
+**Current position:** Phase 3 complete. Phase 4 not started.
+
+> ⚠️ **All prose on the homepage is placeholder copy written by the developer**, not by or
+> with La Casa. It needs the owner's sign-off before this goes anywhere public, and any
+> factual claim in it must come from them.
+>
+> ⚠️ **Before launch: self-host the fonts.** They currently load from Google, which sends
+> every visitor's IP address to Google — ruled a GDPR breach by a German court in 2022.
+> Fine for a private demo, not for the client's live site. See `src/layouts/BaseLayout.astro`.
 
 > ⚠️ **Opening hours in `src/data/restaurant.ts` are unconfirmed placeholders.** A yellow
 > warning bar shows on every page while you develop, and disappears from the built site.
@@ -33,7 +41,9 @@ Then open http://localhost:4321. `Ctrl + C` stops the server. No need to re-clon
 - [x] **Phase 2 — Single source of truth.** `src/data/restaurant.ts` holds hours, phone,
       address, email. Header and footer render from it. Live "Open now / Closed" badge,
       correct in Weybridge time regardless of the visitor's timezone.
-- [ ] **Phase 3 — Homepage.** Palette, fonts, hero, Book a Table button, mobile-first.
+- [x] **Phase 3 — Homepage.** Claret & Bone palette and design tokens, Fraunces + Source
+      Sans 3, dark hero, Book a Table (demo panel — no real booking until Phase 7),
+      mobile-first. Verified at 390px and 1280px with no horizontal overflow.
 - [ ] **Phase 4 — Menu page.** `src/data/menu.ts`, jump links per course, dietary markers.
 - [ ] **Phase 5 — Demo live.** Netlify, `noindex`, shareable URL. The sales asset.
 - [ ] **Phase 6 — Remaining pages.** About, Book, Takeaway, Contact + map, Privacy.

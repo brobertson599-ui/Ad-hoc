@@ -1,77 +1,389 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import OpenStatus from '../components/OpenStatus.astro';
+import BookButton from '../components/BookButton.astro';
 import { restaurant } from '../data/restaurant';
+import { weekRows } from '../lib/hours';
 
-// Proper hero, photography and palette come in Phase 3. This page exists now to
-// prove the data file drives everything.
+/**
+ * ⚠️ ALL PROSE ON THIS PAGE IS PLACEHOLDER COPY, written to show the design.
+ * None of it has been checked with La Casa. Before this goes anywhere public it
+ * needs the owner's sign-off, and any factual claim (how long they have been
+ * open, what the kitchen specialises in, who cooks) must come from them.
+ */
+
+const hoursRows = weekRows(restaurant.hours);
+const { address } = restaurant;
+
+const promises = [
+  {
+    title: 'Fresh pasta',
+    body: 'Made in-house, sauced simply, and sent out the moment it is ready.',
+  },
+  {
+    title: 'From the grill',
+    body: 'Steaks and fish cooked over open heat, timed properly, rested properly.',
+  },
+  {
+    title: 'A room to sit in',
+    body: 'Linen, low light and enough space between tables to hear each other.',
+  },
+];
 ---
 
 <BaseLayout
-  title={`${restaurant.name} — ${restaurant.tagline}, ${restaurant.address.town}`}
-  description={`Family-run Italian restaurant and grill in ${restaurant.address.town}. Book a table, browse the menu, or order takeaway.`}
+  title={`${restaurant.name} — ${restaurant.tagline} in ${restaurant.address.town}`}
+  description={`Family-run Italian restaurant and grill on ${address.street}, ${address.town}. Book a table, browse the full menu, or order takeaway for collection and local delivery.`}
+  transparentHeader
 >
+  <!-- ================= HERO ================= -->
   <section class="hero">
-    <p class="eyebrow">{restaurant.address.town}, {restaurant.address.county}</p>
-    <h1>{restaurant.name}</h1>
-    <p class="tagline">{restaurant.tagline}</p>
+    <div class="hero-inner wrap">
+      <p class="eyebrow">{address.town}, {address.county}</p>
 
-    <OpenStatus />
+      <h1>{restaurant.name}</h1>
 
-    <p class="actions">
-      <a class="button" href={`tel:${restaurant.phoneHref}`}>
-        Call {restaurant.phone}
-      </a>
-    </p>
+      <p class="lede">
+        A family-run Italian kitchen and grill on {address.street}.
+      </p>
+
+      <OpenStatus />
+
+      <div class="cta-row">
+        <BookButton />
+        <a class="button button--ghost" href="/menu">View the menu</a>
+      </div>
+
+      <p class="hero-phone">
+        Or call <a href={`tel:${restaurant.phoneHref}`}>{restaurant.phone}</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= WHAT WE DO ================= -->
+  <section class="promises">
+    <div class="wrap">
+      <ul class="promise-grid">
+        {promises.map((item) => (
+          <li>
+            <h2>{item.title}</h2>
+            <p>{item.body}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= INTRO ================= -->
+  <section class="intro">
+    <div class="wrap intro-inner">
+      <p class="eyebrow">The restaurant</p>
+      <h2>Neighbourhood Italian, cooked properly</h2>
+      <p>
+        La Casa has been feeding Weybridge from the same room on Monument Hill for
+        years — a full à la carte menu alongside pizza, pasta and steaks, and a
+        kitchen that would rather do the classics well than chase a trend.
+      </p>
+      <p>
+        Lunch, dinner, a long Saturday table, or something taken home. Whichever
+        it is, it is the same kitchen cooking it.
+      </p>
+      <p>
+        <a class="text-link" href="/about">More about the family and the kitchen →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ================= THREE WAYS IN ================= -->
+  <section class="options">
+    <div class="wrap">
+      <ul class="option-grid">
+        <li>
+          <h2>Eat in</h2>
+          <p>Lunch and dinner, six days a week. Book ahead at the weekend.</p>
+          <BookButton variant="ghost" label="Book a table" />
+        </li>
+        <li>
+          <h2>Takeaway</h2>
+          <p>Collection from the door, and free delivery across Weybridge.</p>
+          <a class="button button--ghost" href="/takeaway">Takeaway &amp; delivery</a>
+        </li>
+        <li>
+          <h2>The menu</h2>
+          <p>Antipasti to dolci, with wine — all of it readable on your phone.</p>
+          <a class="button button--ghost" href="/menu">Browse the menu</a>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= FIND US ================= -->
+  <section class="find-us">
+    <div class="wrap find-inner">
+      <div>
+        <p class="eyebrow">Find us</p>
+        <h2>{address.street}</h2>
+        <address>
+          {address.town}, {address.county} {address.postcode}
+        </address>
+        <p class="find-actions">
+          <a class="button" href={restaurant.googleMapsUrl} target="_blank" rel="noopener">
+            Get directions
+          </a>
+        </p>
+      </div>
+
+      <div>
+        <p class="eyebrow">Opening hours</p>
+        <dl class="hours">
+          {hoursRows.map((row) => (
+            <div class="hours-row">
+              <dt>{row.days}</dt>
+              <dd>{row.times}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="hours-note">
+          <OpenStatus />
+        </p>
+      </div>
+    </div>
   </section>
 </BaseLayout>
 
 <style>
+  /* ---------- Hero ---------- */
   .hero {
-    max-width: 40rem;
-    margin: 0 auto;
-    padding: 4rem 1.5rem 3rem;
+    position: relative;
+    background:
+      radial-gradient(120% 100% at 50% 0%, #47202a 0%, #2a1a1a 45%, var(--ink) 100%);
+    color: var(--bone);
+    isolation: isolate;
+  }
+
+  /* Fine grain over the gradient so it reads as a room, not a flat colour block.
+     Inline SVG, so there is no image file to download. */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+
+  .hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
+    /* Top padding must clear the overlaid header, which stacks onto three lines
+       on a phone (wordmark / nav / phone number) and one line on desktop. */
+    padding-block: clamp(10rem, 22vw, 11.5rem) clamp(4rem, 10vw, 6rem);
   }
 
-  .eyebrow {
+  .hero h1 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(3.5rem, 15vw, 7.5rem);
+    font-weight: 400;
+    letter-spacing: -0.03em;
+  }
+
+  .hero .lede {
+    margin: 0.75rem 0 1.75rem;
+    max-width: 30rem;
+    font-size: clamp(1.0625rem, 3.5vw, 1.3125rem);
+    color: rgb(247 243 238 / 0.82);
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .hero-phone {
+    margin: 1.5rem 0 0;
+    font-size: 0.9375rem;
+    color: rgb(247 243 238 / 0.7);
+  }
+
+  .hero-phone a {
+    color: var(--brass);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* ---------- Promises strip ---------- */
+  .promises {
+    background: var(--ink-soft);
+    color: rgb(247 243 238 / 0.85);
+    padding-block: 2.5rem;
+  }
+
+  .promise-grid {
+    display: grid;
+    gap: 1.75rem;
     margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-size: 0.75rem;
-    color: var(--claret);
+    padding: 0;
+    list-style: none;
   }
 
-  h1 {
-    margin: 0.4rem 0 0;
-    font-size: clamp(3rem, 12vw, 5.5rem);
-    font-family: ui-serif, Georgia, 'Times New Roman', serif;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
+  .promise-grid h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.0625rem;
+    color: var(--brass);
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: 0.01em;
   }
 
-  .tagline {
-    margin: 0.25rem 0 1.75rem;
-    font-size: clamp(1rem, 3.5vw, 1.25rem);
+  .promise-grid p {
+    margin: 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+
+  /* ---------- Intro ---------- */
+  .intro {
+    padding-block: clamp(3.5rem, 9vw, 6rem);
+  }
+
+  .intro-inner {
+    max-width: 44rem;
+  }
+
+  .intro h2 {
+    margin: 0.5rem 0 1.25rem;
+    font-size: clamp(1.875rem, 5.5vw, 2.75rem);
+  }
+
+  .intro p {
+    margin: 0 0 1rem;
     color: var(--muted);
   }
 
-  .actions {
-    margin: 2rem 0 0;
+  .text-link {
+    color: var(--claret);
+    font-weight: 600;
+    text-decoration: none;
   }
 
-  .button {
-    display: inline-block;
-    padding: 0.85rem 1.75rem;
-    border-radius: 2px;
+  .text-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  /* ---------- Three ways in ---------- */
+  .options {
+    background: var(--bone-warm);
+    padding-block: clamp(3rem, 8vw, 5rem);
+  }
+
+  .option-grid {
+    display: grid;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .option-grid li {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--claret);
+  }
+
+  .option-grid h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+
+  .option-grid p {
+    margin: 0 0 0.75rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+
+  .option-grid .button--ghost {
+    color: var(--claret);
+    margin-top: auto;
+  }
+
+  .option-grid .button--ghost:hover {
     background: var(--claret);
     color: #fff;
-    text-decoration: none;
-    font-weight: 600;
   }
 
-  .button:hover {
-    background: #571620;
+  /* ---------- Find us ---------- */
+  .find-us {
+    padding-block: clamp(3.5rem, 9vw, 5.5rem);
+  }
+
+  .find-inner {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  .find-us h2 {
+    margin: 0.4rem 0 0.25rem;
+    font-size: clamp(1.5rem, 4.5vw, 2rem);
+  }
+
+  .find-us address {
+    font-style: normal;
+    color: var(--muted);
+  }
+
+  .find-actions {
+    margin: 1.5rem 0 0;
+  }
+
+  .hours {
+    margin: 0.75rem 0 0;
+    max-width: 24rem;
+  }
+
+  .hours-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.35rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hours-row dt {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .hours-row dd {
+    margin: 0;
+    text-align: right;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hours-note {
+    margin: 1.25rem 0 0;
+  }
+
+  /* ---------- Wider screens ---------- */
+  @media (min-width: 46rem) {
+    .promise-grid,
+    .option-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+    }
+
+    .find-inner {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
   }
 </style>

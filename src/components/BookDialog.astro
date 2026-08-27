@@ -1,0 +1,101 @@
+---
+import { restaurant } from '../data/restaurant';
+
+/**
+ * The booking panel itself — rendered ONCE per page, by BaseLayout.
+ *
+ * Any number of BookButton components can open it. Keeping the panel here rather
+ * than inside the button means there is only ever one dialog in the page, so no
+ * duplicated element ids (which are invalid HTML and confuse screen readers).
+ *
+ * ⚠️ DEMO BEHAVIOUR. Real online booking is Phase 7 and must not be wired to an
+ * account in the client's name before they sign. Until then this says so plainly
+ * rather than pretending to take a reservation.
+ */
+---
+
+<dialog data-book-dialog aria-labelledby="book-dialog-title">
+  <div class="panel">
+    <button type="button" class="close" data-book-close aria-label="Close">&times;</button>
+
+    <p class="eyebrow">Reservations</p>
+    <h2 id="book-dialog-title">Book a table</h2>
+    <p class="lede">
+      Online booking goes live when the site launches. For now, the kitchen takes
+      reservations by phone.
+    </p>
+
+    <a class="button" href={`tel:${restaurant.phoneHref}`}>Call {restaurant.phone}</a>
+
+    <p class="small">
+      Or email <a href={`mailto:${restaurant.email}`}>{restaurant.email}</a>
+    </p>
+  </div>
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-book-dialog]');
+
+  if (dialog) {
+    // Every button anywhere on the page opens this one panel.
+    document.querySelectorAll<HTMLButtonElement>('[data-book-open]').forEach((button) => {
+      button.addEventListener('click', () => dialog.showModal());
+    });
+
+    dialog.querySelector('[data-book-close]')?.addEventListener('click', () => dialog.close());
+
+    // Clicking the dark area outside the panel closes it, which is what people expect.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  }
+</script>
+
+<style>
+  dialog {
+    width: min(28rem, calc(100vw - 2rem));
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: var(--bone);
+    color: var(--ink);
+  }
+
+  dialog::backdrop {
+    background: rgb(27 22 20 / 0.6);
+  }
+
+  .panel {
+    position: relative;
+    padding: 2.25rem 2rem 2rem;
+    text-align: center;
+  }
+
+  h2 {
+    margin: 0.4rem 0 0.75rem;
+    font-size: 1.75rem;
+  }
+
+  .lede {
+    margin: 0 0 1.5rem;
+    color: var(--muted);
+  }
+
+  .small {
+    margin: 1rem 0 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    border: none;
+    background: none;
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+  }
+</style>

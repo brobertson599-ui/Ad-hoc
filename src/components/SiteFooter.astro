@@ -55,10 +55,9 @@ const { address } = restaurant;
 
 <style>
   .site-footer {
-    margin-top: 4rem;
-    padding: 2.5rem 1.5rem 2rem;
-    background: #1b1614;
-    color: #ded5cc;
+    padding: 3rem var(--gutter) 2rem;
+    background: var(--ink);
+    color: rgb(247 243 238 / 0.8);
     font-size: 0.9375rem;
     line-height: 1.6;
   }
@@ -66,7 +65,7 @@ const { address } = restaurant;
   .cols {
     display: grid;
     gap: 2rem;
-    max-width: 60rem;
+    max-width: var(--measure);
     margin: 0 auto;
   }
 
@@ -80,10 +79,12 @@ const { address } = restaurant;
 
   h2 {
     margin: 0 0 0.75rem;
+    font-family: var(--font-body);
     font-size: 0.75rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.16em;
-    color: #b99a6b;
+    color: var(--brass);
   }
 
   .hours {
@@ -117,7 +118,7 @@ const { address } = restaurant;
 
   a {
     color: inherit;
-    text-decoration-color: #8a7c6d;
+    text-decoration-color: rgb(185 154 107 / 0.6);
     text-underline-offset: 0.2em;
   }
 
@@ -126,11 +127,11 @@ const { address } = restaurant;
   }
 
   .legal {
-    max-width: 60rem;
+    max-width: var(--measure);
     margin: 2.5rem auto 0;
     padding-top: 1.25rem;
-    border-top: 1px solid #332b26;
+    border-top: 1px solid rgb(247 243 238 / 0.12);
     font-size: 0.8125rem;
-    color: #9b8f85;
+    color: var(--muted-light);
   }
 </style>

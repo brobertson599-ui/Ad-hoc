@@ -1,0 +1,20 @@
+---
+/**
+ * A button that opens the site's single booking panel (see BookDialog.astro,
+ * rendered once by BaseLayout). Use as many of these as a page needs.
+ */
+interface Props {
+  variant?: 'solid' | 'ghost';
+  label?: string;
+}
+
+const { variant = 'solid', label = 'Book a table' } = Astro.props;
+---
+
+<button
+  type="button"
+  class:list={['button', variant === 'ghost' && 'button--ghost']}
+  data-book-open
+>
+  {label}
+</button>

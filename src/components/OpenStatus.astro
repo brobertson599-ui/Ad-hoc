@@ -19,15 +19,21 @@
   import { restaurant } from '../data/restaurant';
   import { statusAt, statusLabel, londonNow } from '../lib/hours';
 
-  const el = document.querySelector<HTMLElement>('[data-open-status]');
+  // querySelectorAll, not querySelector: the badge can appear more than once on a
+  // page (hero and opening-hours panel, for instance) and all of them must update.
+  const badges = document.querySelectorAll<HTMLElement>('[data-open-status]');
 
-  if (el) {
+  if (badges.length) {
     const render = () => {
       const now = londonNow();
       const status = statusAt(restaurant.hours, now);
-      el.textContent = statusLabel(status, now.day);
-      el.dataset.state = status.open ? 'open' : 'closed';
-      el.hidden = false;
+      const label = statusLabel(status, now.day);
+
+      badges.forEach((el) => {
+        el.textContent = label;
+        el.dataset.state = status.open ? 'open' : 'closed';
+        el.hidden = false;
+      });
     };
 
     render();

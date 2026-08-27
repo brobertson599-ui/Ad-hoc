@@ -1,19 +1,22 @@
 ---
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
+import BookDialog from '../components/BookDialog.astro';
 import { restaurant } from '../data/restaurant';
 
 /**
- * The wrapper every page uses, so the header and footer are written once and
- * appear everywhere. A page supplies its own title and description; everything
- * else is shared.
+ * The wrapper every page uses, so the header, footer and design tokens are
+ * written once and appear everywhere. A page supplies its own title and
+ * description; everything else is shared.
  */
 interface Props {
   title: string;
   description: string;
+  /** Dark hero pages let the header sit on top of the hero instead of above it. */
+  transparentHeader?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, transparentHeader = false } = Astro.props;
 ---
 
 <html lang="en-GB">
@@ -25,6 +28,22 @@ const { title, description } = Astro.props;
     <!-- DEMO ONLY. Keeps this out of Google so it can never be mistaken for, or
          compete with, the client's real site. Removed at launch — Phase 8. -->
     <meta name="robots" content="noindex, nofollow" />
+
+    <!--
+      Fonts. Fraunces for headings (warm, family-run rather than corporate),
+      Source Sans 3 for body (chosen for the long menu read on a phone).
+
+      ⚠️ BEFORE LAUNCH: self-host these instead of loading from Google.
+      Loading fonts from Google's servers sends every visitor's IP address to
+      Google, which a German court ruled a GDPR breach in 2022. It is fine for a
+      private demo; it should not be how the client's live site ships.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Source+Sans+3:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
@@ -40,21 +59,48 @@ const { title, description } = Astro.props;
       )
     }
 
-    <SiteHeader />
-    <main>
-      <slot />
-    </main>
+    {/* page-shell is the anchor a transparent header positions against, so the
+        header lands on the hero rather than at the top of the document (where it
+        would collide with the dev warning bar above). */}
+    <div class="page-shell">
+      <SiteHeader transparent={transparentHeader} />
+      <main>
+        <slot />
+      </main>
+    </div>
+
     <SiteFooter />
+
+    {/* One booking panel per page; every BookButton anywhere opens this one. */}
+    <BookDialog />
   </body>
 </html>
 
 <style is:global>
-  /* Site-wide basics. The real design work — palette and fonts — is Phase 3. */
+  /*
+    DESIGN TOKENS — the palette and type scale, defined once.
+    Change a value here and it changes everywhere, the same way restaurant.ts
+    works for content. Never paste a raw hex code into a component.
+  */
   :root {
-    --ink: #1b1614;
-    --paper: #f7f3ee;
+    /* Claret & Bone */
     --claret: #6d1f2b;
+    --claret-deep: #571620;
+    --bone: #f7f3ee;
+    --bone-warm: #efe8df;
+    --ink: #1b1614;
+    --ink-soft: #2a2320;
+    --brass: #b99a6b;
     --muted: #5c534d;
+    --muted-light: #9b8f85;
+    --line: #e5ddd3;
+
+    --font-display: 'Fraunces', ui-serif, Georgia, 'Times New Roman', serif;
+    --font-body: 'Source Sans 3', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+    /* Consistent page gutter on phone and desktop. */
+    --gutter: clamp(1.25rem, 5vw, 3rem);
+    --measure: 68rem;
   }
 
   *,
@@ -65,12 +111,20 @@ const { title, description } = Astro.props;
 
   body {
     margin: 0;
-    background: var(--paper);
+    background: var(--bone);
     color: var(--ink);
-    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-    line-height: 1.6;
-    /* Stops the footer floating up the screen on short pages. */
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .page-shell {
+    position: relative;
+    flex: 1;
     display: flex;
     flex-direction: column;
   }
@@ -79,14 +133,93 @@ const { title, description } = Astro.props;
     flex: 1;
   }
 
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
   img {
     max-width: 100%;
     height: auto;
   }
 
+  a {
+    color: var(--claret);
+  }
+
+  /* Visible keyboard focus — required for accessibility, and removed by
+     accident on most restaurant sites. */
+  :focus-visible {
+    outline: 2px solid var(--claret);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Shared layout helpers. */
+  .wrap {
+    width: 100%;
+    max-width: var(--measure);
+    margin: 0 auto;
+    padding-inline: var(--gutter);
+  }
+
+  .eyebrow {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--brass);
+  }
+
+  /* Buttons. Two weights: solid for the one action we want, outline for the rest. */
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.75rem;
+    border: 1px solid transparent;
+    border-radius: 2px;
+    background: var(--claret);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .button:hover {
+    background: var(--claret-deep);
+  }
+
+  .button--ghost {
+    background: transparent;
+    border-color: currentColor;
+    color: inherit;
+  }
+
+  .button--ghost:hover {
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   .dev-warning {
     margin: 0;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem var(--gutter);
     background: #fff4cc;
     color: #5a4708;
     font-size: 0.875rem;

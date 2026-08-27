@@ -2,8 +2,7 @@
 import { restaurant } from '../data/restaurant';
 
 // Navigation lives here so adding a page later means editing one list, not seven
-// pages. The pages themselves arrive in Phase 6 — the links are here now so the
-// structure is visible.
+// pages. Several of these pages arrive in Phase 6 and will 404 until then.
 const nav = [
   { href: '/', label: 'Home' },
   { href: '/menu', label: 'Menu' },
@@ -12,41 +11,65 @@ const nav = [
   { href: '/contact', label: 'Contact' },
 ];
 
+interface Props {
+  /** On the dark homepage hero the header sits over the top rather than above it. */
+  transparent?: boolean;
+}
+
+const { transparent = false } = Astro.props;
 const { pathname } = Astro.url;
 ---
 
-<header class="site-header">
-  <a class="wordmark" href="/">{restaurant.name}</a>
+<header class:list={['site-header', transparent && 'is-transparent']}>
+  <div class="inner wrap">
+    <a class="wordmark" href="/">{restaurant.name}</a>
 
-  <nav aria-label="Main">
-    <ul>
-      {nav.map((item) => (
-        <li>
-          <a href={item.href} aria-current={pathname === item.href ? 'page' : undefined}>
-            {item.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </nav>
+    <nav aria-label="Main">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={pathname === item.href ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
 
-  <a class="call" href={`tel:${restaurant.phoneHref}`}>{restaurant.phone}</a>
+    <a class="call" href={`tel:${restaurant.phoneHref}`}>{restaurant.phone}</a>
+  </div>
 </header>
 
 <style>
   .site-header {
+    position: relative;
+    z-index: 2;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* Sits on top of the hero gradient rather than pushing it down. Positioned
+     against .page-shell in BaseLayout, so top:0 means "top of the hero". */
+  .site-header.is-transparent {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    border-bottom: none;
+    color: var(--bone);
+  }
+
+  .inner {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem 1.5rem;
-    padding: 1rem 1.5rem;
-    border-bottom: 1px solid #e5ddd3;
+    gap: 0.5rem 2rem;
+    padding-block: 1.25rem;
   }
 
   .wordmark {
-    font-family: ui-serif, Georgia, 'Times New Roman', serif;
+    font-family: var(--font-display);
     font-size: 1.5rem;
+    font-weight: 500;
     letter-spacing: -0.01em;
     color: inherit;
     text-decoration: none;
@@ -55,27 +78,54 @@ const { pathname } = Astro.url;
   nav ul {
     display: flex;
     flex-wrap: wrap;
-    gap: 1.25rem;
+    gap: 1.5rem;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
   nav a {
-    color: #5c534d;
+    color: var(--muted);
     text-decoration: none;
     font-size: 0.9375rem;
   }
 
+  .is-transparent nav a {
+    color: rgb(247 243 238 / 0.78);
+  }
+
   nav a:hover,
   nav a[aria-current='page'] {
-    color: #6d1f2b;
+    color: var(--claret);
+  }
+
+  .is-transparent nav a:hover,
+  .is-transparent nav a[aria-current='page'] {
+    color: var(--bone);
   }
 
   .call {
-    color: #6d1f2b;
+    color: var(--claret);
     font-weight: 600;
     text-decoration: none;
     font-variant-numeric: tabular-nums;
+  }
+
+  .is-transparent .call {
+    color: var(--brass);
+  }
+
+  /* On a phone the phone number is the widest thing in the row; give it its own
+     line rather than squeezing the navigation. */
+  @media (max-width: 34rem) {
+    .inner {
+      justify-content: center;
+      text-align: center;
+    }
+
+    nav ul {
+      justify-content: center;
+      gap: 1.1rem;
+    }
   }
 </style>
