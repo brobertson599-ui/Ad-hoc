@@ -148,6 +148,14 @@ Once it looks right, switch To back to the real recipient and save.
 
 ## Troubleshooting
 
+- **Can't save: "The input parameter(s) of action 'X' contain an invalid
+  reference to 'Y'"**: an expression names an action that doesn't exist
+  under that name. Usually the action named in the message hasn't been
+  renamed yet (e.g. the Power BI action is still *Run a query against a
+  dataset*, or *Run hygiene query* if you copied the first flow). Rename it
+  to exactly the name in this guide; `Run_watchlist_query` means
+  *Run watchlist query*. The same error appears if the referenced action
+  sits below or beside the one using it rather than above it.
 - **400 Bad Request, "Column … cannot be found"**: a column name in the
   DAX doesn't match the model. The query uses the same names as the team
   email's working query, so compare the two if you've renamed anything.
