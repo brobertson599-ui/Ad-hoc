@@ -1,0 +1,116 @@
+// =====================================================================
+// SFDC Hygiene Watchlist - per-seller hygiene detail + team totals
+// Paste this into the Power BI action:
+//   "Run a query against a dataset" -> Query text
+//
+// Returns one row per IB specialist (ALL in-scope sellers, clean ones
+// included, so the team totals are always available; the flow filters
+// down to the sellers with issues):
+//   [SpecialistName]        - 'Opp Id Break Down'[IB specialist]
+//   [SpecialistEmail]       - 'Opp Id Break Down'[IB email]
+//   [FlaggedOpps]           - opps with Is Hygiene flag? = "Y"
+//   [TotalOpps]             - all in-scope opps
+//   [HygienePct]            - % of opps with NO flag, 0-100, rounded DOWN
+//                             (so nobody with a flag ever shows 100%)
+//   [BarPx]                 - width in px of the green bar (track = 160px)
+//   [TeamSellers]           - } team totals, identical on every row;
+//   [TeamSellersWithIssues] - } the flow reads them from the first row
+//   [TeamFlaggedOpps]       - }
+//   [TeamTotalOpps]         - }
+//   [TeamHygienePct]        - }
+//
+// Rows come back sorted lowest hygiene first.
+//
+// Filters mirror the report filters:
+//   Is Relevant Op? = Y (all pages), Current Quarter Filter = "Current Quarter",
+//   IB Specialist / Manager / Services Call not blank
+// EXCEPT "Is Hygiene flag? = Y" - that is only a display filter on the
+// report page and must NOT be applied here.
+// =====================================================================
+DEFINE
+    MEASURE 'Opp Id Break Down'[Total opps (flow)] =
+        COUNTROWS('Opp Id Break Down')
+
+    // 0 (not BLANK) for a seller with opps but no flags, so clean sellers
+    // stay in the result and count towards the team totals. Still BLANK
+    // for a seller with no rows at all, so SUMMARIZECOLUMNS drops them.
+    MEASURE 'Opp Id Break Down'[Flagged opps (flow)] =
+        IF(
+            NOT ISEMPTY('Opp Id Break Down'),
+            COALESCE(
+                COUNTROWS(
+                    FILTER(
+                        'Opp Id Break Down',
+                        'Opp Id Break Down'[Is Hygiene flag?] = "Y"
+                    )
+                ),
+                0
+            )
+        )
+
+EVALUATE
+VAR SellerStats =
+    SUMMARIZECOLUMNS(
+        'Opp Id Break Down'[IB specialist],
+        'Opp Id Break Down'[IB email],
+
+        // ---- report filters, replicated ------------------------------
+        // Is Relevant Op? = Y   (all-pages filter)
+        TREATAS({"Y"}, 'Opp Id Break Down'[Is Relevant Op?]),
+
+        // Current Quarter Filter = "Current Quarter"
+        TREATAS({"Current Quarter"}, 'Opp Id Break Down'[Current Quarter Filter]),
+
+        // IB Specialist is not blank
+        FILTER(
+            ALL('Opp Id Break Down'[IB specialist]),
+            NOT ISBLANK('Opp Id Break Down'[IB specialist])
+                && 'Opp Id Break Down'[IB specialist] <> ""
+        ),
+
+        // Manager is not blank
+        FILTER(
+            ALL('Opp Id Break Down'[Manager]),
+            NOT ISBLANK('Opp Id Break Down'[Manager])
+                && 'Opp Id Break Down'[Manager] <> ""
+        ),
+
+        // Services Call is not blank
+        FILTER(
+            ALL('Opp Id Break Down'[Services Call]),
+            NOT ISBLANK('Opp Id Break Down'[Services Call])
+                && 'Opp Id Break Down'[Services Call] <> ""
+        ),
+        // --------------------------------------------------------------
+
+        "@Flagged", [Flagged opps (flow)],
+        "@Total",   [Total opps (flow)]
+    )
+
+VAR Sellers =
+    FILTER(SellerStats, NOT ISBLANK([@Total]))
+
+// Team totals. QUOTIENT is integer division, so percentages round down
+// and are exact (no floating-point 28.9999 -> 28 surprises).
+VAR TeamSellers           = COUNTROWS(Sellers)
+VAR TeamSellersWithIssues = COUNTROWS(FILTER(Sellers, [@Flagged] > 0)) + 0
+VAR TeamFlaggedOpps       = SUMX(Sellers, [@Flagged])
+VAR TeamTotalOpps         = SUMX(Sellers, [@Total])
+VAR TeamHygienePct        = QUOTIENT(100 * (TeamTotalOpps - TeamFlaggedOpps), TeamTotalOpps)
+
+RETURN
+    SELECTCOLUMNS(
+        Sellers,
+        "SpecialistName",        'Opp Id Break Down'[IB specialist],
+        "SpecialistEmail",       'Opp Id Break Down'[IB email],
+        "FlaggedOpps",           [@Flagged],
+        "TotalOpps",             [@Total],
+        "HygienePct",            QUOTIENT(100 * ([@Total] - [@Flagged]), [@Total]),
+        "BarPx",                 QUOTIENT(160 * ([@Total] - [@Flagged]), [@Total]),
+        "TeamSellers",           TeamSellers,
+        "TeamSellersWithIssues", TeamSellersWithIssues,
+        "TeamFlaggedOpps",       TeamFlaggedOpps,
+        "TeamTotalOpps",         TeamTotalOpps,
+        "TeamHygienePct",        TeamHygienePct
+    )
+ORDER BY [HygienePct] ASC, [FlaggedOpps] DESC, [SpecialistName] ASC

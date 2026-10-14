@@ -1,0 +1,257 @@
+<!--
+  SFDC Hygiene Watchlist - weekly manager summary for Power Automate
+  ===================================================================
+  Built from the HPE internal email component template (600px, Arial, #01A982).
+
+  Runtime tokens (replaced by the "Compose email body" expression in the flow):
+    {{RUN_DATE}}        - e.g. "October 19, 2026"
+    {{ISSUE_SELLERS}}   - sellers with at least one flagged opp
+    {{TOTAL_SELLERS}}   - all in-scope sellers
+    {{FLAGGED_OPPS}}    - flagged opps across the team
+    {{TOTAL_OPPS}}      - all in-scope opps across the team
+    {{TEAM_HYGIENE}}    - team hygiene %, 0-100
+    {{WATCHLIST_ROWS}}  - one <tr> per seller with issues (built by the
+                          "Select watchlist rows" action)
+
+  No images: Outlook blocks data: URIs and external images by default, so
+  everything renders from tables and background colors.
+-->
+<body bgcolor="#ffffff" style="font-family: Arial, Helvetica, sans-serif; color:#000000;font-size: 10.5pt;">
+<table cellpadding="0" cellspacing="0" width="100%" style="background-color: #ffffff;padding: 0 7.5pt;margin: 0;width: 100%;">
+	<tbody>
+		<tr>
+			<td>
+				<table width="600" cellspacing="0" cellpadding="0" align="center" style="background-color: #ffffff;font-family: Arial, Helvetica, sans-serif; color:#000000;">
+
+<!-- Module Header -->
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+					<tr>
+						<td>
+							<table width="100%" cellpadding="0" cellspacing="0" valign="middle" style="vertical-align: middle;">
+								<tr>
+									<td height="50" style="height: 50px;" valign="middle">
+										<table cellpadding="0" cellspacing="0">
+											<tr>
+												<td style="border: 4px solid #01A982; width: 34px; height: 12px; font-size: 0; line-height: 0;">&nbsp;</td>
+											</tr>
+											<tr>
+												<td style="padding-top: 4px; font-weight: bold; font-size: 9pt; font-family: Arial, Helvetica, sans-serif; color:#000000; white-space: nowrap;">
+													Hewlett Packard<br />Enterprise
+												</td>
+											</tr>
+										</table>
+									</td>
+									<td width="421" align="right" valign="middle">
+										<span style="text-align: right;font-weight: bold;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000; line-height: 12pt; ">
+											SFDC Hygiene Watchlist
+										</span><br />
+										<span style="text-align: right;font-weight: normal;font-size: 10.5pt;font-family: Arial, Helvetica, sans-serif; color:#000000; line-height: 12pt; ">
+											Weekly summary &bull; {{RUN_DATE}}
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Banner -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" border="0" bgcolor="#01A982">
+								<tr>
+									<td>
+										<p style="text-align: left; margin: 0;">
+											<span style="font-family:Arial,Helvetica,sans-serif; line-height: 24pt; font-size:20pt; color:#FFFFFF;">
+												<strong>This week's hygiene watchlist</strong>
+											</span>
+										</p>
+										<p style="text-align: left; margin: 8px 0 0 0;">
+											<span style="font-family:Arial,Helvetica,sans-serif; line-height: 14pt; font-size:10.5pt; color:#FFFFFF;">
+												Sellers with opportunities flagged for SFDC hygiene in the current quarter, lowest hygiene score first.
+											</span>
+										</p>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module KPI tiles -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" style="background-color: #F8F8F8;">
+								<tr>
+									<td>
+										<table width="100%" cellpadding="0" cellspacing="0">
+											<tr>
+												<td width="172" valign="top" bgcolor="#FFFFFF" style="width: 172px; background-color: #FFFFFF; border-top: 3px solid #01A982;">
+													<table width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding: 14px 16px;">
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:22pt; line-height:26pt; font-weight:bold; color:#000000;">{{ISSUE_SELLERS}}</span><br />
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:10.5pt; line-height:14pt; font-weight:bold; color:#000000;">sellers with flags</span><br />
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:9pt; line-height:12pt; color:#535C66;">of {{TOTAL_SELLERS}} in scope</span>
+													</td></tr></table>
+												</td>
+												<td width="12" style="width: 12px; font-size: 0; line-height: 0;">&nbsp;</td>
+												<td width="172" valign="top" bgcolor="#FFFFFF" style="width: 172px; background-color: #FFFFFF; border-top: 3px solid #01A982;">
+													<table width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding: 14px 16px;">
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:22pt; line-height:26pt; font-weight:bold; color:#000000;">{{FLAGGED_OPPS}}</span><br />
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:10.5pt; line-height:14pt; font-weight:bold; color:#000000;">opps flagged</span><br />
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:9pt; line-height:12pt; color:#535C66;">of {{TOTAL_OPPS}} in scope</span>
+													</td></tr></table>
+												</td>
+												<td width="12" style="width: 12px; font-size: 0; line-height: 0;">&nbsp;</td>
+												<td width="172" valign="top" bgcolor="#FFFFFF" style="width: 172px; background-color: #FFFFFF; border-top: 3px solid #01A982;">
+													<table width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding: 14px 16px;">
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:22pt; line-height:26pt; font-weight:bold; color:#000000;">{{TEAM_HYGIENE}}%</span><br />
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:10.5pt; line-height:14pt; font-weight:bold; color:#000000;">team hygiene</span><br />
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:9pt; line-height:12pt; color:#535C66;">of opps with no flag</span>
+													</td></tr></table>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Watchlist table -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" style="background-color: #F8F8F8;">
+								<tr>
+									<td>
+										<table width="100%" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<p style="text-align: left; margin: 0;">
+														<span style="font-family:Arial,Helvetica,sans-serif; line-height: 16pt;font-size:14pt;">
+															<strong>Sellers to follow up with</strong>
+														</span>
+													</p>
+												</td>
+											</tr>
+											<tr><td style="height: 8px; font-size: 0; line-height: 0;">&nbsp;</td></tr>
+											<tr>
+												<td>
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:10.5pt; line-height:14pt; color:#000000;">
+														Select a name to email that seller directly.
+													</span>
+												</td>
+											</tr>
+											<tr><td style="height: 15px; font-size: 0; line-height: 0;">&nbsp;</td></tr>
+											<tr>
+												<td>
+													<table width="100%" cellpadding="0" cellspacing="0" bgcolor="#FFFFFF" style="background-color: #FFFFFF; border: solid 1px #E0E0E0;">
+														<tr>
+															<th align="left" style="text-align: left; padding: 12px 16px; border-bottom: solid 2pt #01A982; font-family: Arial,Helvetica,sans-serif; font-size: 10.5pt; font-weight: bold; color: #000000;">
+																Seller
+															</th>
+															<th width="100" align="left" style="text-align: left; padding: 12px 8px; border-bottom: solid 2pt #01A982; font-family: Arial,Helvetica,sans-serif; font-size: 10.5pt; font-weight: bold; color: #000000;">
+																Flagged opps
+															</th>
+															<th width="236" align="left" style="text-align: left; padding: 12px 16px 12px 8px; border-bottom: solid 2pt #01A982; font-family: Arial,Helvetica,sans-serif; font-size: 10.5pt; font-weight: bold; color: #000000;">
+																Hygiene score
+															</th>
+														</tr>
+														{{WATCHLIST_ROWS}}
+													</table>
+												</td>
+											</tr>
+											<tr><td style="height: 12px; font-size: 0; line-height: 0;">&nbsp;</td></tr>
+											<tr>
+												<td>
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:9pt; line-height:12pt; color:#535C66;">
+														Hygiene score = share of a seller's in-scope opportunities with no hygiene flag, rounded down. In scope: relevant opportunities in the current quarter with an IB specialist, manager and services call assigned.
+													</span>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module CTA Primary -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="30" cellspacing="0" style="background-color: #F8F8F8;">
+								<tr>
+									<td>
+										<table width="100%" cellspacing="0" cellpadding="0">
+											<tr>
+												<td>
+													<span style="font-family:Arial,Helvetica,sans-serif; font-size:10.5pt; line-height:14pt; color:#000000;">
+														Open the Hygiene Hub to see every flagged opportunity by seller.
+													</span>
+												</td>
+											</tr>
+											<tr><td style="height: 15px; font-size: 0; line-height: 0;">&nbsp;</td></tr>
+											<tr>
+												<td>
+													<table cellpadding="0" cellspacing="0">
+														<tbody>
+															<tr>
+																<td style="background-color:#01A982; padding: 0 30px;">
+																	<p style="text-align:center; margin: 0;">
+																		<a href="https://app.powerbi.com/Redirect?action=OpenReport&amp;appId=5487ab37-f5ef-41b1-b1cb-bfd7f6684652&amp;reportObjectId=1959d48a-7ba2-4af5-b2f4-d78ce7699164&amp;ctid=105b2061-b669-4b31-92ac-24d304d195dc&amp;reportPage=63485e9df828f0870915&amp;pbi_source=appShareLink&amp;portalSessionId=b5921d7d-1330-43d5-8fc8-a1861678cd1c" style="background-color: #01A982; border: 0pt solid #01A982; color: #FFFFFF;font-family:Arial,sans-serif; font-size:12pt;line-height: 42px; font-weight: bold;text-decoration: none;" target="_blank">
+																			Hygiene Hub
+																		</a>
+																	</p>
+																</td>
+															</tr>
+														</tbody>
+													</table>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+<!-- Module Footer -->
+					<tr>
+						<td>
+							<table width="100%" cellpadding="0" cellspacing="0">
+								<tr>
+									<td align="left" style="vertical-align:top; padding:0 30px;">
+										<span style="font-weight: normal;font-size: 9pt;font-family: Arial, Helvetica, sans-serif; color:#000000; padding:0 0 7.5pt;text-align: left;line-height: 10.5pt;">
+											&copy; 2026 Hewlett Packard Enterprise Development LP
+											<br /><br />
+											HPE Internal Use Only &bull; This email was generated automatically every Monday at 10:00 by Power Automate.
+										</span>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<td style="height: 20px;">&nbsp;</td>
+					</tr>
+
+				</table>
+			</td>
+		</tr>
+	</tbody>
+</table>
+</body>
