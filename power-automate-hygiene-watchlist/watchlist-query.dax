@@ -69,6 +69,10 @@ VAR SellerStats =
         ),
 
         // Manager is not blank
+        // To limit the email to ONE manager's team, replace this whole
+        // FILTER(...) block with (name spelled exactly as in the data):
+        //     TREATAS({"Manager Name"}, 'Opp Id Break Down'[Manager]),
+        // Several managers: TREATAS({"Name A", "Name B"}, ...)
         FILTER(
             ALL('Opp Id Break Down'[Manager]),
             NOT ISBLANK('Opp Id Break Down'[Manager])

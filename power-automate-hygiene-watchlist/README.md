@@ -143,6 +143,13 @@ Once it looks right, switch To back to the real recipient and save.
   *Filter sellers with issues* condition to
   `@and(greater(item()?['[FlaggedOpps]'], 0), less(item()?['[HygienePct]'], 90))`.
   The KPI tiles still count the whole team.
+- **Only one manager's team:** in the DAX, replace the *Manager is not
+  blank* `FILTER(...)` block with
+  `TREATAS({"Manager Name"}, 'Opp Id Break Down'[Manager]),`
+  using the name exactly as it appears in the data. To list the names, run
+  `EVALUATE VALUES('Opp Id Break Down'[Manager])` once in the same Power BI
+  action. The table, KPI tiles and team hygiene % then all cover just that
+  team. For several managers, use `TREATAS({"Name A", "Name B"}, …)`.
 - **Different day or time:** edit the Recurrence trigger, and update the
   "every Monday at 10:00" footer line in the template to match.
 
