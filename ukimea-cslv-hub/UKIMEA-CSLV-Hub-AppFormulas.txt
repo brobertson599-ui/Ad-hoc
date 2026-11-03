@@ -1,0 +1,57 @@
+// =============================================================================
+// UKIMEA CSLV HUB - hub data, stored locally inside the app
+// -----------------------------------------------------------------------------
+// WHERE THIS GOES: Power Apps Studio > Tree view > select "App" (top of the
+// tree) > property dropdown (left of the formula bar) > "Formulas" > paste
+// this whole file into the formula bar.
+//
+// HOW TO EDIT LATER: change the values below and the whole hub screen follows
+// - card names, status rows, badge colours, dots, ticker and button links.
+//   - Row order = screen order: row 1 is the top-left card and the first
+//     status row; rows 1-3 are the top row of cards, rows 4-6 the bottom row.
+//   - Keep exactly six rows.
+//   - Status: "Operational", "Limited" or "Down" (green / orange / red also
+//     work; anything else shows a grey "Unknown").
+//   - Values go in double quotes; a quote mark inside a value is written "".
+// =============================================================================
+
+HubLastUpdated = "03 Nov 2026";
+
+HubData = Table(
+    {
+        Dashboard: "1% Club",
+        Status: "Operational",
+        Description: "All data sources connected - up to date.",
+        URL: "REPLACE_WITH_1_PERCENT_CLUB_URL"
+    },
+    {
+        Dashboard: "Attach Wizard [Beta]",
+        Status: "Operational",
+        Description: "All data sources connected - up to date.",
+        URL: "REPLACE_WITH_ATTACH_WIZARD_URL"
+    },
+    {
+        Dashboard: "SFDC Hygiene",
+        Status: "Operational",
+        Description: "All data sources connected - up to date.",
+        URL: "REPLACE_WITH_SFDC_HYGIENE_URL"
+    },
+    {
+        Dashboard: "UKIMEA Compute Backlog",
+        Status: "Operational",
+        Description: "All data sources connected - up to date.",
+        URL: "REPLACE_WITH_COMPUTE_BACKLOG_URL"
+    },
+    {
+        Dashboard: "UKIMEA OS Channel Actuals",
+        Status: "Operational",
+        Description: "All data sources connected - up to date.",
+        URL: "REPLACE_WITH_OS_CHANNEL_ACTUALS_URL"
+    },
+    {
+        Dashboard: "3PAR EOSL Tracker",
+        Status: "Operational",
+        Description: "All data sources connected - up to date.",
+        URL: "REPLACE_WITH_3PAR_EOSL_URL"
+    }
+);

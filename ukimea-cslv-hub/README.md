@@ -14,7 +14,8 @@ idle motion, a personalised greeting, and a live clock.
 | File | What it is |
 |---|---|
 | `UKIMEA-CSLV-Hub-HomeScreen.pa.yaml` | Classic edition. Paste-ready Power Apps YAML — every control on the screen, animations driven by Timer controls, statuses edited directly in the app. |
-| `UKIMEA-CSLV-Hub-HomeScreen-SVG.pa.yaml` | **SVG + live Excel edition (recommended).** Same design rebuilt with SVG graphics — smoother 60 fps animations, an HPE-themed entrance — and the status board, badges, dots, ticker and button links all fed live from an Excel table. Setup steps below. |
+| `UKIMEA-CSLV-Hub-HomeScreen-SVG.pa.yaml` | SVG + live Excel edition. Same design rebuilt with SVG graphics — smoother 60 fps animations, an HPE-themed entrance — and the status board, badges, dots, ticker and button links all fed live from an Excel table. Setup steps below. |
+| `UKIMEA-CSLV-Hub-HomeScreen-SVG-Local.pa.yaml` + `UKIMEA-CSLV-Hub-AppFormulas.txt` | **SVG + local data edition (current).** The same SVG screen with no external connection: all hub data lives in one table inside the app (App.Formulas), and all six dashboards are set to Operational. Setup steps below. |
 | `preview/ukimea-cslv-hub-preview.html` | Design preview. Open in a browser to see the layout, colours, entrance/idle animations, and button hover behaviour before building in Power Apps. |
 
 ## SVG + live Excel edition
@@ -65,6 +66,34 @@ swaps the description — no app edits needed. Renaming a dashboard means
 updating it in four places: the Excel `Dashboard` cell, the row label
 (`lblStatusName n`), the SVG card (`imgDash n`) and its overlay button
 (`btnDash n`).
+
+## SVG + local data edition
+
+No data connection: everything the hub shows (dashboard names, statuses,
+descriptions, links and the "Last updated" date) lives in `HubData`, a
+table defined in the app's **App.Formulas**. It has the same columns as
+the Excel table, except `Text` is renamed `Description`. All six
+dashboards are set to **Operational**.
+
+**Setup — two pastes, in this order:**
+
+1. Tree view → select **App** → property dropdown → **Formulas** → paste
+   the contents of `UKIMEA-CSLV-Hub-AppFormulas.txt`. The repo copy has URL
+   placeholders, because this repository is public and real report links
+   are kept out of it. Replace each `REPLACE_WITH_…_URL`, or use the copy
+   with your links that was sent to you directly.
+2. Delete every existing control on the hub screen, then click the empty
+   canvas and paste `UKIMEA-CSLV-Hub-HomeScreen-SVG-Local.pa.yaml`.
+3. Optional: if the Excel connection is still in the Data pane, remove it
+   so users aren't asked to consent to a connection the app no longer uses.
+
+**Editing later:** change values in App.Formulas only; every card, status
+row, badge, dot, ticker entry and button link follows. Rows map to the
+screen by position: row 1 is the top-left card and the first status row,
+rows 1–3 are the top row of cards and rows 4–6 the bottom row. Status
+accepts `Operational` / `Limited` / `Down` or `green` / `orange` / `red`.
+Because the data is part of the app, colleagues see a change only after
+you **save and publish**.
 
 ## The six dashboards
 
